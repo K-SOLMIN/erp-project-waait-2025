@@ -182,22 +182,18 @@
 	</div>
 </footer>
 <div class="movemail-modal">
-	<%-- <c:if test="${not empty myMailBoxes }"> --%>
+	<c:if test="${not empty myMailBoxes }">
 		<ul class="mailbox-list">
-			<li>
-				<button class="nostyle-button">내 메일함 1</button>
-			</li>
-			<li>
-				<button class="nostyle-button">내 메일함 1</button>
-			</li>
-			<li>
-				<button class="nostyle-button">내 메일함 1</button>
-			</li>
+			<c:forEach var="myMailBox" items="${myMailBoxes }">
+				<li>
+					<button class="nostyle-button">${myMailBox.myMailBoxName }</button>
+				</li>
+			</c:forEach>
 		</ul>
-	<%-- </c:if> --%>
-	<%-- <c:if test="${empty myMailBoxes }">
+	</c:if>
+	<c:if test="${empty myMailBoxes }">
 		<h3 style="text-align: center; ">내 메일함 없음</h3>
-	</c:if> --%>
+	</c:if>
 </div>
 
 <%-- <c:if test="${not empty myMailBoxes }">
@@ -301,7 +297,6 @@
 				moveMailImg.style.border = "1px solid black";
 				modalNum = 1;
 			} else {
-				console.log("오세요?");
 				myMailBoxModal.style.display = "none";
 				moveMailImg.style.border = "none";
 				modalNum = 0;
