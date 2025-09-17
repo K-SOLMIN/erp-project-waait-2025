@@ -290,9 +290,8 @@
 	}
 	
 	//내 메일함으로 이동 모달창 띄우기
-	
 	const myMailBoxModal = (function() {
-		let modalNum = 0;
+		let modalNum = 0; //모달창 0이면 닫혀있음 1이면 열려있음
 		const myMailBoxModal = () => {
 			const myMailBoxModal = document.querySelector(".movemail-modal");
 			const moveMailImg = document.querySelector(".movemail-img");
