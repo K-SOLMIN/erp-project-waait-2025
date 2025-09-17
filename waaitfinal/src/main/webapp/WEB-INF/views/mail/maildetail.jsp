@@ -42,7 +42,14 @@
 									<div class="media-body mt-25">
 										<span class="text-primary">${mail.senderName }</span> 
 										<span class="d-sm-inline d-none">&lt;${mail.senderMailAddress }&gt;</span>
-										 <small class="text-muted d-block">받는사람 : ${empMailAddress }</small>
+										<small class="text-muted d-block">
+											받는사람 : 
+											<c:if test="${not empty mail.receivers }">
+												<c:forEach var="receiver" items="${mail.receivers }" varStatus="status">
+													${receiver.mailReceiverAddress }<c:if test="${!status.last }">, </c:if>
+												</c:forEach>
+											</c:if> 
+										</small>
 									</div>
 								</div>
 								<div class="information d-sm-flex d-none align-items-center">
