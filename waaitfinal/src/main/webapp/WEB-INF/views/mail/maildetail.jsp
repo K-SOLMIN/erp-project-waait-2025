@@ -111,9 +111,8 @@
 										</div>
 										<div id="moveMyMailBoxButtonContainer">
 											<!-- <button class="btn btn-primary" onclick="moveMyMailBox()">메일함 이동</button> -->
-											<button onclick="moveMyMailBox()" class="non-style-button">
-												<img src="${path }/resources/waait/mail/img/movementmailbox.png" 
-																					style="width: 23px; height: 28px; margin-right: 3px;" />											
+											<button onclick="myMailBoxModal()" class="non-style-button">
+												<img src="${path }/resources/waait/mail/img/movementmailbox.png" class="movemail-img" />											
 											</button>
 										</div>
 									</div>
@@ -183,14 +182,22 @@
 	</div>
 </footer>
 <div class="movemail-modal">
-	<c:if test="${not empty myMailBoxes }">
-		<ul>
-			<li></li>
+	<%-- <c:if test="${not empty myMailBoxes }"> --%>
+		<ul class="mailbox-list">
+			<li>
+				<button class="nostyle-button">내 메일함 1</button>
+			</li>
+			<li>
+				<button class="nostyle-button">내 메일함 1</button>
+			</li>
+			<li>
+				<button class="nostyle-button">내 메일함 1</button>
+			</li>
 		</ul>
-	</c:if>
-	<c:if test="${empty myMailBoxes }">
-		<h3 style="text-align: center; ">내 메일함 없음</h2>
-	</c:if>
+	<%-- </c:if> --%>
+	<%-- <c:if test="${empty myMailBoxes }">
+		<h3 style="text-align: center; ">내 메일함 없음</h3>
+	</c:if> --%>
 </div>
 
 <%-- <c:if test="${not empty myMailBoxes }">
@@ -281,6 +288,29 @@
 			location.assign("${path }/mail/mailmain.do");
 		});
 	}
+	
+	//내 메일함으로 이동 모달창 띄우기
+	
+	const myMailBoxModal = (function() {
+		let modalNum = 0;
+		const myMailBoxModal = () => {
+			const myMailBoxModal = document.querySelector(".movemail-modal");
+			const moveMailImg = document.querySelector(".movemail-img");
+			
+			if(modalNum == 0) {
+				myMailBoxModal.style.display = "block";
+				moveMailImg.style.border = "1px solid black";
+				modalNum = 1;
+			} else {
+				console.log("오세요?");
+				myMailBoxModal.style.display = "none";
+				moveMailImg.style.border = "none";
+				modalNum = 0;
+			}			
+		}
+		
+		return myMailBoxModal;
+	})();
 </script>
 <style>
 .icon-button {
@@ -304,16 +334,47 @@
 	background: none;
 	border: none;
 }
+.movemail-img{
+	width: 26px;
+	height: 36px;
+	padding: 2px 2px 2px 4px;
+	/* border: 1px solid black; */
+	border-radius: 9px;"
+}
 .movemail-modal {
-	/* display: none; */
+	display: none;
 	border: 1px solid black;
 	border-radius: 10px;
 	height: 400px;
 	width: 300px;
 	position: absolute;
-	top: 20%;
+	top: 140px;
 	right: 0.4%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background-color: white;
 	/* transform: translateX(-50%); */
+}
+.mailbox-list {
+	list-style-type: none;
+	text-align: left;
+	font-size: 25px;
+	padding: 0;
+	/* background-color: white; */
+}
+.mailbox-list>li {
+	border-bottom: 1px solid black;
+	height: 45px;
+	display: flex;
+	align-items: center;
+}
+.nostyle-button {
+	width: 100%;
+	height: 100%;
+	background-color: white;
+	border: none;
+	text-align: left;
+	font-size: 25px;
 }
 </style>
 </html>
