@@ -1044,7 +1044,7 @@
 																	<div class="user-details">
 																		<div class="mail-items">
 																			<span class="list-group-item-text text-truncate">${mail.senderMailAddress }
-																				${mail.senderName }</span>
+																				<${mail.senderName }></span>
 																		</div>
 																		<div class="mail-meta-item">
 																			<span class="float-right"> <span
