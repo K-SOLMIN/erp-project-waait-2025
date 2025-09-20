@@ -549,7 +549,6 @@
 		const mailboxes = document.querySelectorAll("a[name='menu']");
 		let selectedMailBox = "";
 		mailboxes.forEach(e => {
-			console.log(e.className);
 			if(e.className.includes("active")) {
 				selectedMailBox = e.id;
 			}
