@@ -32,6 +32,8 @@ import com.waait.dto.RecentSearch;
 import com.waait.dto.SpamDomain;
 import com.waait.service.MailService;
 
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -139,12 +141,20 @@ public class MailController {
 	
 	@GetMapping("/mailmain.do")
 	public String changeMailView(Model model,
-								@RequestParam(defaultValue = "1") int cPage) {
+								@RequestParam(defaultValue = "1") int cPage, HttpServletRequest request) {
 		Employee employee = getLoginEmpInfo();
 		String mailReceiverAddress = employee.getEmpEmail();
 		long empNo = employee.getEmpNo();
 		int spamMailCount = 0;
 		int numPerpage = 0;
+		
+		String selectedMailBox = "";
+		HttpSession session = request.getSession(false);
+		
+		if(session != null) {
+			selectedMailBox = (String) session.getAttribute("selectedMailBox");
+			model.addAttribute("selectedMailBox", selectedMailBox);
+		}
 		
 		List<SpamDomain> spamDomains = service.getSpamDomain(empNo);
 		List<MyMailBox> myMailBoxList = service.getMyMailBox(empNo);
@@ -340,15 +350,17 @@ public class MailController {
 	}
 	
 	@GetMapping("/maildetail.do")
-	public String mailDetailView(Model model, int mailNo, String selectedMailBox) {
+	public String mailDetailView(Model model, int mailNo, String selectedMailBox, HttpServletRequest request) {
 		System.out.println("매개변수로 들어온 mailNo : " + mailNo);
+		HttpSession session = request.getSession();
 		String userMailAddress = getLoginEmpInfo().getEmpEmail();
 		long empNo = getLoginEmpInfo().getEmpNo();
+		
+		session.setAttribute("selectedMailBox", selectedMailBox);
+		
 		Map<String, Object> param = Map.of("mailNo", mailNo, "userMailAddress", userMailAddress);
 		
 		Mail mail = service.getMailDetailByNo(param);
-		System.out.println("maildetail로 보낼 메일 : " + mail);
-		System.out.println("selectedMailBox : " + selectedMailBox);
 		List<MyMailBox> myMailBoxList = service.getMyMailBox(empNo);
 		
 		service.updateReceiverReadStatus(param);
@@ -793,7 +805,7 @@ public class MailController {
 	}
 	
 	@PostMapping("applymailsetting.do")
-	public String applyMailSetting(int numPerpage, String[] spamMailAddress, Model model) {
+	public String applyMailSetting(int numPerpage, String[] spamMailAddress, Model model, HttpServletRequest request) {
 		long empNo = getLoginEmpInfo().getEmpNo();
 		
 		Map<String, Object> mailSettingParam = new HashMap<String, Object>();
@@ -816,7 +828,7 @@ public class MailController {
 		
 		int result = service.applyMailSetting(mailSettingParam);
 		
-		return changeMailView(model, 1);
+		return changeMailView(model, 1, request);
 	}
 	
 	//test
