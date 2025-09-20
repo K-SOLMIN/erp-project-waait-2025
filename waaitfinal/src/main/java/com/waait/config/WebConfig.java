@@ -9,8 +9,8 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(new SessionRemoveInterceptorForMail())
-			.addPathPatterns("/**");
+		registry.addInterceptor(new SessionRemoveInterceptorForMail()).excludePathPatterns("/mail/**");
+
 	}
 	/*
 	 * @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
