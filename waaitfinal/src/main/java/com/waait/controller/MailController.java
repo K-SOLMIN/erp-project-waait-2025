@@ -340,7 +340,7 @@ public class MailController {
 	}
 	
 	@GetMapping("/maildetail.do")
-	public String mailDetailView(Model model, int mailNo) {
+	public String mailDetailView(Model model, int mailNo, String selectedMailBox) {
 		System.out.println("매개변수로 들어온 mailNo : " + mailNo);
 		String userMailAddress = getLoginEmpInfo().getEmpEmail();
 		long empNo = getLoginEmpInfo().getEmpNo();
@@ -348,6 +348,7 @@ public class MailController {
 		
 		Mail mail = service.getMailDetailByNo(param);
 		System.out.println("maildetail로 보낼 메일 : " + mail);
+		System.out.println("selectedMailBox : " + selectedMailBox);
 		List<MyMailBox> myMailBoxList = service.getMyMailBox(empNo);
 		
 		service.updateReceiverReadStatus(param);
