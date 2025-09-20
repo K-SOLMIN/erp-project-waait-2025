@@ -15,7 +15,8 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		
-		registry.addInterceptor(sessionRemoveInterceptor).excludePathPatterns("/mail/**");
+		registry.addInterceptor(sessionRemoveInterceptor)
+			.excludePathPatterns("/mail/**","/resources/**","/app-assets/**");
 
 	}
 	/*

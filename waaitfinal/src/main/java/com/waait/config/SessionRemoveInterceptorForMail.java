@@ -15,7 +15,6 @@ public class SessionRemoveInterceptorForMail implements HandlerInterceptor{
 		String uri = request.getRequestURI();
 		HttpSession session = request.getSession(false);
 		
-		System.out.println("interceptort실행");
 		if(!uri.contains("/mail") && session != null) session.removeAttribute("selectedMailBox");
 		
 		return true;
