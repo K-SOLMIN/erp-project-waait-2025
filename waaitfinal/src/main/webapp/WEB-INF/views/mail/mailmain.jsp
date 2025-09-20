@@ -1000,6 +1000,16 @@
 			}
 		}
 </script>
+
+<c:if test="${not empty selectedMailBox }">
+<input value="${selectedMailBox }" id="selectedMailBoxName" hidden="true">
+	<script>
+		const selectedMailBoxName = document.getElementById("selectedMailBoxName").value;
+		switch(selectedMailBoxName) {
+			case "보낸메일함" :  sendingMailList(); break;
+		}
+	</script>
+</c:if>
 											<!-- email user list start -->
 											<div class="email-user-list list-group ps ps--active-y" id="mailListContainer">
 												<c:if test="${not empty mails }">
