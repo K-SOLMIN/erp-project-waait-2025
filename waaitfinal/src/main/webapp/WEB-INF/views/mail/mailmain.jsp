@@ -87,7 +87,7 @@
                                         			</svg>
 												</div> 보낸 메일함
 											</a> 
-											<a href="javascript:changeView('/mail/temporarysavemailbox.do')" class="list-group-item" name="menu" id="임시저장함" onclick="selectMenu(event)">
+											<a href="javascript:temporarySaveMailBoxView()" class="list-group-item" name="menu" id="임시저장함" onclick="selectMenu(event)">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#pencil" />
@@ -558,8 +558,9 @@
 	
 	const continueMailWrite = (e) => {
 		console.log(e.currentTarget.parentElement.id);
+		const selectedMailBox = "임시저장함";
 		const mailNo = e.currentTarget.parentElement.id;
-		location.assign("${path }/mail/continuewritemail.do?mailNo=" + mailNo);
+		location.assign("${path }/mail/continuewritemail.do?mailNo=" + mailNo + "&selectedMailBox=" + selectedMailBox);
 	}
 	
 	const checkAllMail = (function() {
@@ -732,6 +733,7 @@
 	}
 	
 	const temporarySaveMailBoxView = () => {
+		const selectedMailBox = "임시저장함";
 		fetch("${path }/mail/temporarysavemailbox.do")
 		.then(response => response.text())
 		.then(data => {
@@ -1005,8 +1007,23 @@
 <input value="${selectedMailBox }" id="selectedMailBoxName" hidden="true">
 	<script>
 		const selectedMailBoxName = document.getElementById("selectedMailBoxName").value;
+		const mailBox = document.querySelectorAll("a[name='menu']");
+		//전에 선택한 메일리박스 선택되있게하는 로직
+		mailBox.forEach(e => {
+			e.setAttribute("class", "list-group-item");
+			
+			if(e.id == selectedMailBoxName) {
+				e.setAttribute("class", "list-group-item active");
+			}
+		});
+		
+		
+		//전에 선택한 메일함리스트 로드하는 로직
 		switch(selectedMailBoxName) {
-			case "보낸메일함" :  sendingMailList(); break;
+			case "보낸메일함" : sendingMailList(); break;
+			case "즐겨찾기" : favoriteMailBoxView(); break;
+			case "스팸메일함" : 
+			case "임시저장함" : temporarySaveMailBoxView(); console.log("임시저장함 실행"); break;
 		}
 	</script>
 </c:if>
