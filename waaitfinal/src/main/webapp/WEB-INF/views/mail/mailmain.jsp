@@ -740,7 +740,6 @@
 	}
 	
 	const temporarySaveMailBoxView = () => {
-		const selectedMailBox = "임시저장함";
 		fetch("${path }/mail/temporarysavemailbox.do")
 		.then(response => response.text())
 		.then(data => {
