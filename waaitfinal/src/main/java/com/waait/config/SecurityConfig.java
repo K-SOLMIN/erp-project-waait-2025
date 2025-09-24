@@ -35,11 +35,10 @@ public class SecurityConfig {
 						.usernameParameter("user")
 						.passwordParameter("password"))
 				.authenticationProvider(provider)
-				.logout(logout -> logout.logoutSuccessUrl("/login").invalidateHttpSession(true)
-				).sessionManagement(session->
-				session.maximumSessions(1)
-				)
-				;
+				.logout(logout -> logout.logoutSuccessUrl("/login").invalidateHttpSession(true))
+				.sessionManagement(session->
+					session.maximumSessions(1)
+				);
 		return http.build();
 	}
 
