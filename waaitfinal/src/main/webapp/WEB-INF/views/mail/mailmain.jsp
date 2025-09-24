@@ -1023,7 +1023,7 @@
 			case "보낸메일함" : sendingMailList(); break;
 			case "즐겨찾기" : favoriteMailBoxView(); break;
 			case "스팸메일함" : 
-			case "임시저장함" : temporarySaveMailBoxView(); console.log("임시저장함 실행"); break;
+			case "임시저장함" : temporarySaveMailBoxView(); break;
 		}
 	</script>
 </c:if>
