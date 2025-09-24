@@ -101,14 +101,14 @@
                                         			</svg>
 												</div> 즐겨찾기
 											</a> 
-											<a href="javascript:changeView('/mail/joinspammail.do')" class="list-group-item" name="menu" id="스팸메일함" onclick="selectMenu(event)">
+											<a href="javascript:spamMailBoxView()" class="list-group-item" name="menu" id="스팸메일함" onclick="selectMenu(event)">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#info-circle" />
                                         			</svg>
 												</div> 스팸메일함 <span class="badge bg-light-danger badge-pill badge-round float-right mt-50">${spamMailCount }</span>
 											</a> 
-											<a href="javascript:changeView('/mail/jointrashmailbox.do')" class="list-group-item" name="menu" id="휴지통" onclick="selectMenu(event)">
+											<a href="javascript:trashMailBoxView()" class="list-group-item" name="menu" id="휴지통" onclick="selectMenu(event)">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#trash" />
@@ -731,6 +731,7 @@
 			document.getElementById("mailListContainer").innerHTML = jspCode;
 		});
 	}
+	
 	const spamMailBoxView = () => {
 		fetch("${path }/mail/joinspammail.do")
 		.then(response => response.text())
@@ -757,6 +758,14 @@
 	
 	const favoriteMailBoxView = () => {
 		fetch("${path }/mail/myfavoritemailbox.do")
+		.then(response => response.text())
+		.then(data => {
+			document.getElementById("mailListContainer").innerHTML = data;
+		});
+	}
+	
+	const trashMailBoxView = () => {
+		fetch("${path }/mail/jointrashmailbox.do")
 		.then(response => response.text())
 		.then(data => {
 			document.getElementById("mailListContainer").innerHTML = data;
@@ -1028,8 +1037,9 @@
 		switch(selectedMailBoxName) {
 			case "보낸메일함" : sendingMailList(); break;
 			case "즐겨찾기" : favoriteMailBoxView(); break;
-			case "스팸메일함" : 
+			case "스팸메일함" : spamMailBoxView(); break;
 			case "임시저장함" : temporarySaveMailBoxView(); break;
+			case "휴지통" : 
 		}
 	</script>
 </c:if>
