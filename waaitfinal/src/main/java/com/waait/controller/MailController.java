@@ -32,7 +32,6 @@ import com.waait.dto.RecentSearch;
 import com.waait.dto.SpamDomain;
 import com.waait.service.MailService;
 
-import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -153,6 +152,7 @@ public class MailController {
 		
 		if(session != null) {
 			selectedMailBox = (String) session.getAttribute("selectedMailBox");
+			System.out.println("selectedMailBoxName : " + selectedMailBox);
 			model.addAttribute("selectedMailBox", selectedMailBox);
 		}
 		
@@ -532,9 +532,15 @@ public class MailController {
 	}
 	
 	@GetMapping("/continuewritemail.do")
-	public String continueWriteMail(int mailNo, Model model) {
+	public String continueWriteMail(int mailNo, HttpServletRequest request, String selectedMailBox, Model model) {
+		HttpSession session = request.getSession();
+		session.setAttribute("selectedMailBox", selectedMailBox);
+		
 		Mail temporarySaveMail = service.joinTempoSaveMailByMailNo(mailNo);
-		System.out.println("tempSaveMailContinue : " + temporarySaveMail);
+		System.out.println("tempSaveMailContinue : " + temporarySaveMail
+								+ " selectedMailBox : " + selectedMailBox);
+		String selectedMailBoxName = (String) session.getAttribute("selectedMailBox");
+		System.out.println("selectedMailBoxName : " + selectedMailBoxName);
 		model.addAttribute("mail", temporarySaveMail);
 		
 		return "mail/writemail";
