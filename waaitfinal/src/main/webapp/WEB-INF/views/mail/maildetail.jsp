@@ -193,7 +193,8 @@
 		<ul class="mailbox-list">
 			<c:forEach var="myMailBox" items="${myMailBoxes }">
 				<li>
-					<button class="nostyle-button">${myMailBox.myMailBoxName }</button>
+					<button class="nostyle-button" onclick="moveMyMailBox();">${myMailBox.myMailBoxName }</button>
+					<input id="myMailBoxNo" value="${myMailBox.myMailBoxNo }" hidden="true" disabled>
 				</li>
 			</c:forEach>
 		</ul>
@@ -278,7 +279,7 @@
 	
 	const moveMyMailBox = () => {
 		const mailNo = ${mail.mailNo };
-		const mailBoxNo = document.getElementById("myMailBoxSelect").value;
+		const mailBoxNo = document.getElementById("myMailBoxNo").value;
 		fetch('${path }/mail/addmailmymailbox.do', {
 			method : "POST",
 			headers : {
