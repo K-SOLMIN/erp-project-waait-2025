@@ -1039,7 +1039,7 @@
 			case "즐겨찾기" : favoriteMailBoxView(); break;
 			case "스팸메일함" : spamMailBoxView(); break;
 			case "임시저장함" : temporarySaveMailBoxView(); break;
-			case "휴지통" : 
+			case "휴지통" : trashMailBoxView(); break;
 		}
 	</script>
 </c:if>
