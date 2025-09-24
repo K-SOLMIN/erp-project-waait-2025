@@ -731,6 +731,13 @@
 			document.getElementById("mailListContainer").innerHTML = jspCode;
 		});
 	}
+	const spamMailBoxView = () => {
+		fetch("${path }/mail/joinspammail.do")
+		.then(response => response.text())
+		.then(data => {
+			document.getElementById("mailListContainer").innerHTML = data;
+		})
+	}
 	
 	const temporarySaveMailBoxView = () => {
 		const selectedMailBox = "임시저장함";
