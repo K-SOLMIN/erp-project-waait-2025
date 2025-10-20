@@ -156,7 +156,7 @@
 															} else {
 																document.getElementById("myMailBoxListContainer").innerHTML
 																	+= "<div style='display:flex;'>"
-																		+ "<a href='javascript:changeView(\"${path }/mail/joinmymailbox.do?myMailBoxNo=" + data.myMailBoxNo + "\")' class='list-group-item' name='myMailBox' id='" + data.myMailBoxNo + "' onclick='selectMenu(event)'>"
+																		+ "<a href='javascript:changeView(\"${path }/mail/joinmymailbox.do?myMailBoxNo=" + data.myMailBoxNo + "\")' class='list-group-item' name='myMailBox" + data.myMailBoxNo + "' id='" + data.myMailBoxNo + "' onclick='selectMenu(event)'>"
 																			+ "<div class='fonticon-wrap d-inline me-3'>"
 																				+ "<svg class='bi' width='1.5em' height='1.5em' fill='currentColor'>"
 																					+ "<use xlink:href='${path }/resources/assets/static/images/bootstrap-icons.svg#envelope' />"
@@ -243,13 +243,18 @@
 											<c:if test="${not empty myMailBoxes }">
 												<c:forEach var="myBox" items="${myMailBoxes }">
 													<div style="display:flex">
-														<a href="javascript:changeView('/mail/joinmymailbox.do?myMailBoxNo=${myBox.myMailBoxNo }')" class="list-group-item" name="menu" id="myMailBox" onclick="selectMenu(event)">
+														<a href="javascript:myMailBoxView(${myBox.myMailBoxNo })" class="list-group-item" name="menu" id="myMailBox${myBox.myMailBoxNo }" onclick="selectMenu(event)">
 															<div class="fonticon-wrap d-inline me-3">
 																<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
 			                                            			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
 			                                        			</svg>
-															</div> 
-															${myBox.myMailBoxName }
+															</div>
+															<c:if test="${myBox.myMailBoxName.length() <= 8 }">
+																${myBox.myMailBoxName }
+															</c:if>
+															<c:if test="${myBox.myMailBoxName.length() > 8 }">
+																${myBox.myMailBoxName.substring(0, 8) }...
+															</c:if>
 														</a>
 														<button class="deleteMyMailBoxButton" id="${myBox.myMailBoxNo }" onclick="deleteMyMailBox(event)">삭제</button>
 														<input type="text" name="myMailBoxName" value="${myBox.myMailBoxName }" hidden="true" disabled>
@@ -772,6 +777,14 @@
 		});
 	}
 	
+	const myMailBoxView = (myBoxNo) => {
+		fetch("${ path}/mail/joinmymailbox.do?myMailBoxNo=" + myBoxNo)
+		.then(response => response.text())
+		.then(data => {
+			document.getElementById("mailListContainer").innerHTML = data;
+		});
+	}
+	
 	const selectMenu = (function() {
 		let selectMenuName = "받은메일함";
 		const selectMenu = (event) => {
@@ -1021,9 +1034,9 @@
 <c:if test="${not empty selectedMailBox }">
 <input value="${selectedMailBox }" id="selectedMailBoxName" hidden="true">
 	<script>
-		const selectedMailBoxName = document.getElementById("selectedMailBoxName").value;
+		let selectedMailBoxName = document.getElementById("selectedMailBoxName").value;
 		const mailBox = document.querySelectorAll("a[name='menu']");
-		//전에 선택한 메일리박스 선택되있게하는 로직
+		//전에 선택한 메일박스 선택되있게하는 로직
 		mailBox.forEach(e => {
 			e.setAttribute("class", "list-group-item");
 			
@@ -1032,6 +1045,9 @@
 			}
 		});
 		
+		if(selectedMailBoxName.include("myMailBox")) {
+			
+		}
 		
 		//전에 선택한 메일함리스트 로드하는 로직
 		switch(selectedMailBoxName) {
@@ -1040,6 +1056,7 @@
 			case "스팸메일함" : spamMailBoxView(); break;
 			case "임시저장함" : temporarySaveMailBoxView(); break;
 			case "휴지통" : trashMailBoxView(); break;
+			case "myMailBox" : 
 		}
 	</script>
 </c:if>
