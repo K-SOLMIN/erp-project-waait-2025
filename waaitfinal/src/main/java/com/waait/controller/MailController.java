@@ -139,8 +139,8 @@ public class MailController {
 	
 	
 	@GetMapping("/mailmain.do")
-	public String changeMailView(Model model,
-								@RequestParam(defaultValue = "1") int cPage, HttpServletRequest request) {
+	public String changeMailView(Model model, HttpServletRequest request,
+								HttpServletResponse response, @RequestParam(defaultValue = "1") int cPage) {
 		Employee employee = getLoginEmpInfo();
 		String mailReceiverAddress = employee.getEmpEmail();
 		long empNo = employee.getEmpNo();
@@ -237,6 +237,10 @@ public class MailController {
 		model.addAttribute("notReadCount", notReadCount);
 		model.addAttribute("spamMailCount", spamMailCount);
 		model.addAttribute("recentSearch", searchList);
+		
+		//response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		response.setHeader("Pragma", "no-cache");
 		
 		return "mail/mailmain";
 	}
@@ -811,7 +815,8 @@ public class MailController {
 	}
 	
 	@PostMapping("applymailsetting.do")
-	public String applyMailSetting(int numPerpage, String[] spamMailAddress, Model model, HttpServletRequest request) {
+	public String applyMailSetting(int numPerpage, String[] spamMailAddress, Model model, HttpServletRequest request
+									, HttpServletResponse response) {
 		long empNo = getLoginEmpInfo().getEmpNo();
 		
 		Map<String, Object> mailSettingParam = new HashMap<String, Object>();
@@ -834,7 +839,7 @@ public class MailController {
 		
 		int result = service.applyMailSetting(mailSettingParam);
 		
-		return changeMailView(model, 1, request);
+		return changeMailView(model, request, response, 1);
 	}
 	
 	//test
