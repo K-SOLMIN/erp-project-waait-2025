@@ -2049,6 +2049,7 @@
 		//뒤로가기시 반드시 요청보내는 메소드
 		window.addEventListener("pageshow", e => {
 		  
+			//true => bfcache 또는 뒤로가기시 return값은 true
 		  if (e.persisted) {
 		    window.location.reload();
 		  }
