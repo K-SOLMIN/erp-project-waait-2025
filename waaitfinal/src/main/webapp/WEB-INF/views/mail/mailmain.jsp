@@ -240,24 +240,12 @@
 													alert("이동시킬 메일이 없습니다. 메일을 먼저 체크해주세요");
 												}
 											}
-											
-											const myMailBoxNameHover = (function() {
-												let myMailBoxContent = document.querySelector(".mymailbox-span");
-												
-												const myMailBoxNameHover = () => {
-													myMailBoxContent.addEventListener("mouseover", e => {
-														
-													})
-												}
-												
-											})();
-											
 										</script>
 											<div class="list-group list-group-labels" id="myMailBoxListContainer">
 											<c:if test="${not empty myMailBoxes }">
 												<c:forEach var="myBox" items="${myMailBoxes }">
 													<div style="display:flex">
-														<a href="javascript:myMailBoxView(${myBox.myMailBoxNo })" class="list-group-item" name="menu" id="myMailBox${myBox.myMailBoxNo }" onclick="selectMenu(event)">
+														<a href="javascript:myMailBoxView(${myBox.myMailBoxNo })" class="list-group-item mymailbox-list" name="menu" id="myMailBox${myBox.myMailBoxNo }" onclick="selectMenu(event)">
 															<div class="fonticon-wrap d-inline me-3">
 																<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
 			                                            			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
@@ -292,7 +280,38 @@
 											 	</c:forEach>
 											</c:if>
 										</div>
-										
+										<script>
+											//내 메일함 이름 ...으로 축약되어있으면 마우스 올려놓을시 풀 네임 보여주고 떠나면 다시 축약된 이름을 보이게함.
+											document.querySelectorAll("a[class='list-group-item mymailbox-list']").forEach(e => {
+												//mailboxName이 요약된 내 메일함 이름
+												let mailboxName = e.lastElementChild.innerText;
+												
+												if(mailboxName.trim().endsWith("...")) {
+													const myMailBoxFullName = e.nextElementSibling.nextElementSibling.value;
+
+													e.addEventListener("mouseenter", e => {
+														e.target.nextElementSibling.remove();
+														e.target.lastElementChild.innerText = myMailBoxFullName;
+													});
+													
+													e.addEventListener("mouseleave", e => {
+														let myMailBoxId = e.target.id;
+														let myMailBoxNo = myMailBoxId.substring(9, myMailBoxId.length);
+														
+														const delButton = document.createElement("button");
+														delButton.className = "deleteMyMailBoxButton";
+														delButton.id = myMailBoxNo;
+														delButton.onclick = deleteMyMailBox;
+														delButton.innerText = "삭제";
+														
+														e.target.after(delButton);
+														
+														e.target.lastElementChild.innerText = mailboxName;
+														
+													});
+												}
+											});
+										</script>
 										<!-- sidebar label end -->
 										<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
 											<div class="ps__thumb-x" tabindex="0"
@@ -1048,6 +1067,7 @@
 <c:if test="${not empty selectedMailBox }">
 <input value="${selectedMailBox }" id="selectedMailBoxName" hidden="true">
 	<script>
+		//이거 지금 왜 되는지 모르겠다;;
 		let selectedMailBoxName = document.getElementById("selectedMailBoxName").value;
 		const mailBox = document.querySelectorAll("a[name='menu']");
 		//전에 선택한 메일박스 선택되있게하는 로직
@@ -1059,9 +1079,9 @@
 			}
 		});
 		
-		if(selectedMailBoxName.include("myMailBox")) {
+		/* if(selectedMailBoxName.include("myMailBox")) {
 			
-		}
+		} */
 		
 		//전에 선택한 메일함리스트 로드하는 로직
 		switch(selectedMailBoxName) {
