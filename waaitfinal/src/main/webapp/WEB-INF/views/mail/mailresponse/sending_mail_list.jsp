@@ -18,18 +18,18 @@
 					</div>
 					<button class="icon-button" onclick="addFavorite(event)">
 					<span id="colorDecisionSpan" class=
-						<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+						<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
                                     	"favorite text-warning"
                                     </c:if>
-						<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+						<c:if test="${mail.senderStatus != '즐겨찾기' }" >
                                     	"favorite"
                                     </c:if>
                             	>
 						<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
-                                        <use xlink:href=<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+                                        <use xlink:href=<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
                                                   	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
                                                   </c:if>
-											<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+											<c:if test="${mail.senderStatus != '즐겨찾기' }" >
                                                   	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
                                                	</c:if> id="iconPath" 
                                   />

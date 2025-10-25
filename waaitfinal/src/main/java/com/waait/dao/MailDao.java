@@ -90,6 +90,10 @@ public class MailDao {
 	public int addFavoriteMail(SqlSession session, String mailNo) {
 		return session.update("mail.addFavoriteMail", mailNo);
 	}
+	
+	public int addSenderFavoriteMail(SqlSession session, String mailNo) {
+		return session.update("mail.addSenderFavoriteMail", mailNo);
+	}
 
 	public int cancelAddFavorite(SqlSession session, String mailNo) {
 		return session.update("mail.cancelAddFavotie", mailNo);

@@ -377,8 +377,13 @@ public class MailController {
 	}
 	
 	@GetMapping("/addfavorite.do")
-	public @ResponseBody int addFavoriteMail(String mailNo) {
-		return service.addFavoriteMail(mailNo);
+	public @ResponseBody int addFavoriteMail(String mailNo, String selectedMailBox) {
+		System.out.println("selectedMailBox : " + selectedMailBox);
+		if(selectedMailBox.equals("받은메일함")) {
+			return service.addFavoriteMail(mailNo);			
+		} else {
+			return service.addSenderFavoriteMail(mailNo);
+		}
 	}
 	
 	@GetMapping("/canceladdfavorite.do")

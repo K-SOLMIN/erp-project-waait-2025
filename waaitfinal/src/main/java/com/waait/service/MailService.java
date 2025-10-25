@@ -107,6 +107,10 @@ public class MailService {
 		}
 		return result;
 	}
+	
+	public int addSenderFavoriteMail(String mailNo) {
+		return dao.addSenderFavoriteMail(session, mailNo);
+	}
 
 	public int cancelAddFavorite(String mailNo) {
 		return dao.cancelAddFavorite(session, mailNo);
@@ -352,6 +356,7 @@ public class MailService {
 	public List<Mail> joinSenderFavoriteMail(long empNo) {
 		return dao.joinSenderFavoriteMail(session, empNo);
 	}
+
 
 
 

@@ -64,7 +64,8 @@
 					</div>
 				</div>
 			</li>
-			<c:if test="${not empty senderFavoriteMail }">
+		</c:forEach>
+		<c:if test="${not empty senderFavoriteMail }">
 				<c:forEach var="senderMail" items="${senderFavoriteMail }">
 					<li class="media" id="${senderMail.mailNo }" name="mailList">
 						<div class="user-action">
@@ -76,10 +77,10 @@
 							</div>
 							<button class="icon-button" onclick="addFavorite(event)">
 								<span id="colorDecisionSpan" class=
-									<c:if test="${senderMail.mailStatus eq '즐겨찾기' }" >
+									<c:if test="${senderMail.senderStatus eq '즐겨찾기' }" >
 		                            	"favorite text-warning"
 		                            </c:if>
-									<c:if test="${senderMail.mailStatus != '즐겨찾기' }" >
+									<c:if test="${senderMail.senderStatus != '즐겨찾기' }" >
 		                            	"favorite"
 		                            </c:if>
 	                            >
@@ -124,7 +125,6 @@
 				</li>
 				</c:forEach>
 			</c:if>
-		</c:forEach>
 	</ul>
 	<div id="bageParContainer">
 		${pageBar }										

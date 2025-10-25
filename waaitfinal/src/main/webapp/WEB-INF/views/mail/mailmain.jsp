@@ -251,11 +251,11 @@
 			                                            			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
 			                                        			</svg>
 															</div>
-															<c:if test="${myBox.myMailBoxName.length() <= 8 }">
+															<c:if test="${myBox.myMailBoxName.length() <= 7 }">
 																<span class="mymailbox-span">${myBox.myMailBoxName }</span>
 															</c:if>
-															<c:if test="${myBox.myMailBoxName.length() > 8 }">
-																<span class="mymailbox-span">${myBox.myMailBoxName.substring(0, 8) }...</span>
+															<c:if test="${myBox.myMailBoxName.length() > 7 }">
+																<span class="mymailbox-span">${myBox.myMailBoxName.substring(0, 7) }...</span>
 															</c:if>
 														</a>
 														<button class="deleteMyMailBoxButton" id="${myBox.myMailBoxNo }" onclick="deleteMyMailBox(event)">삭제</button>
@@ -675,10 +675,18 @@
 		const mailFavoriteStatus = e.currentTarget.firstElementChild.className == "favorite text-warning"; //mail의 즐겨찾기 여부를 확인합니다.
 		const decisionFavoriteSpan = e.currentTarget.firstElementChild; //span태그의 속성을 변경하기위해 변수로 초기화해줍니다.
 		const svgTagForFillYellow = decisionFavoriteSpan.querySelector("use"); //span자식태그의 use태그의 xlink:href 속성을 변경하기위해 use태그 element를 변수로 초기과해줍니다.
+		const mailboxes = document.querySelectorAll("a[name='menu']");
+		let selectedMailBox = "";
 		
+		mailboxes.forEach(e => {
+			if(e.className.includes("active")) {
+				selectedMailBox = e.id;
+			}
+		});
+		console.log("selectedMailBox : " + selectedMailBox);
 		//메일의 즐겨찾기 여부를 mailFavoriteStatus의 boolean값으로 확인해 true일 경우에는 즐겨찾기 해제를 하고 false일 경우에는 즐겨찾기를 해줍니다.
 		if(mailFavoriteStatus == true) {
-			fetch("${path}/mail/canceladdfavorite.do?mailNo=" + mailNo)
+			fetch("${path}/mail/canceladdfavorite.do?mailNo=" + mailNo + "&selectedMailBox=" + selectedMailBox)
 			.then(response => response.text())
 			.then(data => {
 				console.log(data);
@@ -692,7 +700,7 @@
 				}
 			});
 		} else {
-			fetch("${path}/mail/addfavorite.do?mailNo=" + mailNo)
+			fetch("${path}/mail/addfavorite.do?mailNo=" + mailNo + "&selectedMailBox=" + selectedMailBox)
 			.then(response => response.text())
 			.then(data => {
 				console.log(data);
