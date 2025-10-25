@@ -508,10 +508,14 @@ public class MailController {
 		String pageBar = paging(totalData, cPage, numPerpage, pageBarSize, url);
 		
 		List<Mail> mailList = service.joinFavoriteMailBox(loginMemberEmailDomain);
+		List<Mail> senderFavoriteMail = service.joinSenderFavoriteMail(empNo);
+		
 		System.out.println("favoriteList : " + mailList);
+		System.out.println("senderFavorite : " + senderFavoriteMail + " empNo : " + empNo);
 		
 		model.addAttribute("mails", mailList);
 		model.addAttribute("pageBar", pageBar);
+		model.addAttribute("senderFavoriteMail", senderFavoriteMail);
 		
 		return "mail/mailresponse/favorite_mail_list";
 	}

@@ -255,5 +255,9 @@ public class MailDao {
 		return session.selectList("mail.getRecentSearch", empNo);
 	}
 
+	public List<Mail> joinSenderFavoriteMail(SqlSession session, long empNo) {
+		return session.selectList("mail.senderFavoriteMail", empNo);
+	}
+
 
 }

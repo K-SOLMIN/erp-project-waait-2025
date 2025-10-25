@@ -349,6 +349,10 @@ public class MailService {
 		return dao.getRecentSearch(session, empNo);
 	}
 
+	public List<Mail> joinSenderFavoriteMail(long empNo) {
+		return dao.joinSenderFavoriteMail(session, empNo);
+	}
+
 
 
 
