@@ -388,7 +388,10 @@ public class MailController {
 	
 	@GetMapping("/canceladdfavorite.do")
 	public @ResponseBody int cancelAddFavorite(String mailNo) {
-		return service.cancelAddFavorite(mailNo);
+		long empNo = getLoginEmpInfo().getEmpNo();
+		Map<String, Object> sqlParam = Map.of("empNo", empNo, "mailNo", mailNo);
+		
+		return service.cancelAddFavorite(sqlParam);
 	}
 	
 	@GetMapping("/writemail.do")
@@ -506,21 +509,19 @@ public class MailController {
 	public String joinFavoriteMailBox(Model model, @RequestParam(defaultValue = "1") int cPage) {
 		long empNo = getLoginEmpInfo().getEmpNo();
 		String loginMemberEmailDomain = getLoginEmpInfo().getEmpEmail();
+		Map<String, Object> loginMemberParam = Map.of("empNo", empNo, "mailAddress", loginMemberEmailDomain);
+		
 		int numPerpage = getUserSettingNumPerpage(empNo);
-		int totalData = service.getFavoriteMailTotalData(loginMemberEmailDomain);
+		int totalData = service.getFavoriteMailTotalData(loginMemberParam);
 		int pageBarSize = 5;
 		String url = "/mail/myfavoritemailbox.do";
 		String pageBar = paging(totalData, cPage, numPerpage, pageBarSize, url);
+		Map<String, Integer> pagingParam = Map.of("cPage", cPage, "numPerpage", numPerpage);
 		
-		List<Mail> mailList = service.joinFavoriteMailBox(loginMemberEmailDomain);
-		List<Mail> senderFavoriteMail = service.joinSenderFavoriteMail(empNo);
-		
-		System.out.println("favoriteList : " + mailList);
-		System.out.println("senderFavorite : " + senderFavoriteMail + " empNo : " + empNo);
+		List<Mail> mailList = service.joinFavoriteMailBox(loginMemberParam, pagingParam);
 		
 		model.addAttribute("mails", mailList);
 		model.addAttribute("pageBar", pageBar);
-		model.addAttribute("senderFavoriteMail", senderFavoriteMail);
 		
 		return "mail/mailresponse/favorite_mail_list";
 	}

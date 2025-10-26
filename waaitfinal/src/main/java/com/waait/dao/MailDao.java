@@ -95,8 +95,8 @@ public class MailDao {
 		return session.update("mail.addSenderFavoriteMail", mailNo);
 	}
 
-	public int cancelAddFavorite(SqlSession session, String mailNo) {
-		return session.update("mail.cancelAddFavotie", mailNo);
+	public int cancelAddFavorite(SqlSession session, Map<String, Object> sqlParam) {
+		return session.update("mail.cancelAddFavotie", sqlParam);
 	}
 
 	public int selectSequence(SqlSession session) {
@@ -128,12 +128,13 @@ public class MailDao {
 		}
 	}
 	
-	public int getFavoriteMailTotalData(SqlSession session, String loginMemberEmailDomain) {
-		return session.selectOne("mail.getFavoriteMailTotalData", loginMemberEmailDomain);
+	public int getFavoriteMailTotalData(SqlSession session, Map<String, Object> loginMemberParam) {
+		return session.selectOne("mail.getFavoriteMailTotalData", loginMemberParam);
 	}
 	
-	public List<Mail> joinFavoriteMailBox(SqlSession session, String loginMemberEmailDomain) {
-		return session.selectList("mail.joinFavoriteMailBox", loginMemberEmailDomain);
+	public List<Mail> joinFavoriteMailBox(SqlSession session, Map<String, Object> loginMemberParam, Map<String, Integer> pagingParam) {
+		RowBounds rb = getRowBounds(pagingParam);
+		return session.selectList("mail.joinFavoriteMailBox", loginMemberParam, rb);
 	}
 
 	public List<Mail> joinTempoSaveMailBox(SqlSession session, long empNo) {

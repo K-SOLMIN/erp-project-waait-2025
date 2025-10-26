@@ -112,8 +112,8 @@ public class MailService {
 		return dao.addSenderFavoriteMail(session, mailNo);
 	}
 
-	public int cancelAddFavorite(String mailNo) {
-		return dao.cancelAddFavorite(session, mailNo);
+	public int cancelAddFavorite(Map<String, Object> sqlParam) {
+		return dao.cancelAddFavorite(session, sqlParam);
 	}
 	
 	@Transactional
@@ -177,12 +177,12 @@ public class MailService {
 		return dao.getMyMailBoxTotalData(session, myMailBoxNo);
 	}
 	
-	public int getFavoriteMailTotalData(String loginMemberEmailDomain) {
-		return dao.getFavoriteMailTotalData(session, loginMemberEmailDomain);
+	public int getFavoriteMailTotalData(Map<String, Object> loginMemberParam) {
+		return dao.getFavoriteMailTotalData(session, loginMemberParam);
 	}
 	
-	public List<Mail> joinFavoriteMailBox(String loginMemberEmailDomain) {
-		return dao.joinFavoriteMailBox(session, loginMemberEmailDomain);
+	public List<Mail> joinFavoriteMailBox(Map<String, Object> loginMemberParam, Map<String, Integer> pagingParam) {
+		return dao.joinFavoriteMailBox(session, loginMemberParam, pagingParam);
 	}
 
 	public List<Mail> joinTempoSaveMailBox(long empNo) {
