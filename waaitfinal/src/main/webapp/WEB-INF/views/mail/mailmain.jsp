@@ -28,7 +28,7 @@
 <body>
     <script src="${path }/resources/assets/static/js/initTheme.js"></script>
 	<div id="app">
-		<div id="main" style="margin-left: 0px;">
+		<div id="main" style="margin-left: 0px; padding-top: 0px;">
 			<header class="mb-3">
 				<a href="#" class="burger-btn d-block d-xl-none"> 
 					<i class="bi bi-justify fs-3"></i>
@@ -38,12 +38,15 @@
 			<div class="page-heading email-application overflow-hidden">
 				<div class="page-title">
 					<div class="row">
-						<div class="col-12 col-md-6 order-md-1 order-last">
+						<!-- <div class="col-12 col-md-6 order-md-1 order-last">
 							<h3>Email Application</h3>
 							<p class="text-subtitle text-muted">A full inbox-ui for you
 								to implement messaging.</p>
-						</div>
-						<div class="col-12 col-md-6 order-md-2 order-first">
+						</div> -->
+						<div class="logo" style="height: 100; ">
+			                <a href="${path }/"><img src="/resources/images/logo.png" alt="Logo" srcset="" width="150px" style="height:90px"></a>
+			            </div>
+						<!-- <div class="col-12 col-md-6 order-md-2 order-first">
 							<nav aria-label="breadcrumb"
 								class="breadcrumb-header float-start float-lg-end">
 								<ol class="breadcrumb">
@@ -52,7 +55,7 @@
 										Application</li>
 								</ol>
 							</nav>
-						</div>
+						</div> -->
 					</div>
 				</div>
 				<section class="section content-area-wrapper">
@@ -74,7 +77,7 @@
 									<div class="sidebar-menu-list" id="sideBarMenu">
 										<!-- sidebar menu  -->
 										<div class="list-group list-group-messages">
-											<a href="javascript:receiveMailList()" class="list-group-item pt-0 active" name="menu" id="받은메일함" onclick="selectMenu(event)">
+											<a href="javascript:receiveMailList()" class="list-group-item pt-0 active" name="menu" id="받은메일함" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
@@ -82,35 +85,35 @@
 												</div> 받은메일함
 												<span class="badge bg-light-primary badge-pill badge-round float-right mt-50">${notReadCount }</span>
 											</a> 
-											<a href="javascript:sendingMailList()" class="list-group-item" name="menu" id="보낸메일함" onclick="selectMenu(event)">
+											<a href="javascript:sendingMailList()" class="list-group-item" name="menu" id="보낸메일함" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#archive" />
                                         			</svg>
 												</div> 보낸 메일함
 											</a> 
-											<a href="javascript:temporarySaveMailBoxView()" class="list-group-item" name="menu" id="임시저장함" onclick="selectMenu(event)">
+											<a href="javascript:temporarySaveMailBoxView()" class="list-group-item" name="menu" id="임시저장함" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#pencil" />
                                         			</svg>
 												</div> 임시저장함
 											</a> 
-											<a href="javascript:changeView('/mail/myfavoritemailbox.do')" class="list-group-item" name="menu" id="즐겨찾기" onclick="selectMenu(event)">
+											<a href="javascript:changeView('/mail/myfavoritemailbox.do')" class="list-group-item" name="menu" id="즐겨찾기" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#star" />
                                         			</svg>
 												</div> 즐겨찾기
 											</a> 
-											<a href="javascript:spamMailBoxView()" class="list-group-item" name="menu" id="스팸메일함" onclick="selectMenu(event)">
+											<a href="javascript:spamMailBoxView()" class="list-group-item" name="menu" id="스팸메일함" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#info-circle" />
                                         			</svg>
 												</div> 스팸메일함 <span class="badge bg-light-danger badge-pill badge-round float-right mt-50">${spamMailCount }</span>
 											</a> 
-											<a href="javascript:trashMailBoxView()" class="list-group-item" name="menu" id="휴지통" onclick="selectMenu(event)">
+											<a href="javascript:trashMailBoxView()" class="list-group-item" name="menu" id="휴지통" onclick="selectMenu(event); saveSelectMenu(event);">
 												<div class="fonticon-wrap d-inline me-3">
 													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#trash" />
@@ -129,6 +132,22 @@
 											<input type="text" class="mailBoxNameInput" name="myMailBoxName" placeholder="내 메일함 이름 입력" hidden="true">
 										</div>
 										<script>
+											const saveSelectMenu = (event) => {
+												const selectMenuName = event.target.id;
+												
+												fetch(${path} + "/mail/saveselectmenu.do", {
+													method : "POST",
+													header : {
+														"Content-Type" : "application/x-www-form-urlencoded;charset=utf-8"
+													},
+													body : "menuName=" + selectMenuName
+												})
+												.then(response => response.text)
+												.then(result => {
+													
+												});
+											};
+											
 											document.querySelector(".myMailBoxContainerTopRow").addEventListener("mouseenter", e => {
 												console.log(e.target.lastElementChild);
 												e.target.lastElementChild.hidden = false;
@@ -928,33 +947,6 @@
 			.then(data => {
 				document.getElementById("mailListContainer").innerHTML = data;
 			});
-			/* if(selectMenuName == "보낸메일함") {
-				console.log("보낸메일함 삭제");
-				fetch("${path }/mail/deletesendmail.do", {
-					method : "POST",
-					headers : {
-						"content-type" : "application/x-www-form-urlencoded;charset=utf-8"
-					},
-					body : "mailNoStr=" + mailNoStr
-				})
-				.then(response => response.text())
-				.then(data => {
-					document.getElementById("mailListContainer").innerHTML = data;
-				});
-			} else if(selectMenuName == "받은메일함") {
-				console.log("받은메일함 삭제");
-				fetch("${path }/mail/deletereceivemail.do", {
-					method : "POST",
-					headers : {
-						"content-type" : "application/x-www-form-urlencoded;charset=utf-8"
-					},
-					body : "mailNoStr=" + mailNoStr
-				})
-				.then(response => response.text())
-				.then(data => {
-					document.getElementById("mailListContainer").innerHTML = data;
-				});
-			} */
 		})
 		return selectMenu;
 	})();

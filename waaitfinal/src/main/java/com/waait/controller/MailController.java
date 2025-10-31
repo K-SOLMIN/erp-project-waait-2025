@@ -58,12 +58,11 @@ public class MailController {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<ul class='pagination justify-content-center pagination-sm' style='margin-top : 50px;'>");
 		if(pageNo == 1) {
-			sb.append("<li class='page-item disabled'>");
+			sb.append("<li class='page-item disabled' hidden='true'>");
 			sb.append("<a class='page-link' href='#'>이전</a>");
 			sb.append("</li>");
 		} else {
 			sb.append("<li class='page-item'>");
-//			sb.append("<a class='page-link' href='javascript:fn_paging(" + (pageNo - 1) + ")'>이전</a>");
 			sb.append("<a class='page-link' href='javascript:ajaxPaging(" + (pageNo - 1) + ",\"" + url + "\")'>이전</a>");
 			sb.append("</li>");
 		}
@@ -75,7 +74,6 @@ public class MailController {
 				sb.append("</li>");
 			} else {
 				sb.append("<li class='page-item'>");
-//				sb.append("<a class='page-link' href='javascript:fn_paging(" + pageNo + ")'>" + pageNo + "</a>");
 				sb.append("<a class='page-link' href='javascript:ajaxPaging(" + pageNo + ",\"" + url + "\")'>" + pageNo + "</a>");
 				sb.append("</li>");
 			}
@@ -83,42 +81,15 @@ public class MailController {
 		}
 		
 		if(pageNo > totalPage) {
-			sb.append("<li class='page-item disabled'>");
+			sb.append("<li class='page-item disabled' hidden='true'>");
 			sb.append("<a class='page-link' href='#'>다음</a>");
 			sb.append("</li>");
 		} else {
 			sb.append("<li class='page-item'>");
-//			sb.append("<a class='page-link' href='javascript:fn_paging(" + pageNo + ")'>다음</a>");
 			sb.append("<a class='page-link' href='javascript:ajaxPaging(" + pageNo + ",\"" + url + "\")'>다음</a>");
 			sb.append("</li>");
 		}
 		sb.append("</ul>");
-		
-//		sb.append("<script>");
-//		sb.append("function ajaxPaging(pageNo) {");
-//		sb.append("console.log('pageNo : ' + pageNo);");
-//		sb.append("fetch('${path }" + url + "?cPage=' + pageNo + '&numPerpage=" + numPerpage + "')");
-//		sb.append(".then(response => response.text())");
-//		sb.append(".then(data => {");
-//		sb.append("document.getElementById('mailListContainer').innerHTML = data;");
-//		sb.append("});");
-//		sb.append("}");
-//		sb.append("</script>");
-		
-//		function ajaxPaging(pageNo) {
-//			console.log("왜 너가 실행 돼?");
-//			fetch("${path }/mail/joinsendingmailbox.do?cPage=1&numPerpage=5")
-//			.then(response => response.text())
-//			.then(data => {
-//				document.getElementById("mailListContainer").innerHTML = data;
-//			});	
-//		}
-		
-//		sb.append("<script>");
-//		sb.append("function fn_paging(pageNo) {");
-//		sb.append("location.assign('" + url + "?cPage='+pageNo+'&numPerpage=" + numPerpage + "')");
-//		sb.append("}");
-//		sb.append("</script>");
 		
 		return sb.toString();
 	}
@@ -243,6 +214,13 @@ public class MailController {
 		response.setHeader("Pragma", "no-cache");
 		
 		return "mail/mailmain";
+	}
+	
+	@PostMapping("/saveselectmenu.do")
+	public int saveSelectMenu(String menuName, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.setAttribute("selectedMailBox", menuName);
+		return 0;
 	}
 	
 	@GetMapping("/receivingmail.do")

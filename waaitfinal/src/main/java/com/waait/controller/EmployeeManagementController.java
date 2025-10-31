@@ -348,7 +348,7 @@ public class EmployeeManagementController {
 	
 	@PostMapping("/enrollemployee.do")
 	public String enrollEmployee(@ModelAttribute Employee emp, String engName, String usingEmail, String deptCode, String teamCode,
-			MultipartFile profile, MultipartFile signfile, HttpSession session) {
+			MultipartFile profile, MultipartFile signfile, HttpSession session, Model model) {
 		String signfilePath = session.getServletContext().getRealPath("/resources/upload/emp/signfile/");
 		String profilePath = session.getServletContext().getRealPath("/resources/upload/emp/profile/");
 		System.out.println("등록하려는 사원정보 : " + emp);
@@ -396,7 +396,7 @@ public class EmployeeManagementController {
 		}
 		
 		String initialPwd = "0000";
-		String userId = engName + (int) (Math.random() * 1000) + 1;
+		String userId = engName + ((int) (Math.random() * 1000) + 1);
 		emp.setEmpId(userId);
 		
 		
@@ -443,10 +443,9 @@ public class EmployeeManagementController {
 		
 		int result = 0;
 		result = service.enrollEmployee(emp);
-		userId += emp.getEmpNo();
 		
 		System.out.println("등록할 사원정보 : " + emp);
-		return null;
+		return manageMainView(model);
 	}
 	
 	@PostMapping("/searchempformodifydept.do")
