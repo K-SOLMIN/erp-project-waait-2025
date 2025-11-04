@@ -441,11 +441,16 @@ public class EmployeeManagementController {
 			e.printStackTrace();
 		}
 		
-		int result = 0;
-		result = service.enrollEmployee(emp);
+		service.enrollEmployee(emp);
 		
 		System.out.println("등록할 사원정보 : " + emp);
 		return manageMainView(model);
+	}
+	
+	@PostMapping("/joinempdetail.do")
+	public String joinEmpDetail(Model model, int empNo) {
+		System.out.println("empNo : " + empNo);
+		return "empmanage/empdetailview";
 	}
 	
 	@PostMapping("/searchempformodifydept.do")

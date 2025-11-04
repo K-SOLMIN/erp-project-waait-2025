@@ -54,6 +54,37 @@ function ajaxPagingForSearch(pageNo, url, searchType, searchValue) {
 	})
 }
 
+document.getElementById("searchDetailModal").style.display = "none";
+
+const changeEmpDetailView = (e) => {
+	const empNo = e.target.previousElementSibling.value;
+	
+	const form = document.createElement("form");
+	const hiddenInput = document.createElement("input");
+	
+	form.method = "POST";
+	form.action = path + "/manage/joinempdetail.do";
+	
+	hiddenInput.type = "text"
+	hiddenInput.name = "empNo";
+	hiddenInput.hidden = true;
+	hiddenInput.value = empNo;
+	
+	form.appendChild(hiddenInput);
+	document.body.appendChild(form);
+	form.submit();
+	/*fetch(path + "/manage/joinempdetail.do", {
+		method : "POST",
+		headers : {
+			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+		},
+		body : "empNo=" + empNo
+	})
+	.then(response => response.text())
+	.then(data => {
+		console.log(data);
+	});*/
+}
 /*document.getElementById("numPerpage").addEventListener("change", e => {
 	const numPerpage = e.target.value;
 	const sortdata = document.getElementById("sortdata").value;
@@ -219,6 +250,7 @@ const searchDetailAction = (pageNo) => {
 
 const showSearchDetailModal = () => {
 	const modal = document.getElementById("searchDetailModal");
+	
 	if(modal.style.display == 'none') modal.style.display = "inline"
 	else modal.style.display = 'none'
 }

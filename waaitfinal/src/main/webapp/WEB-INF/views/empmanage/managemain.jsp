@@ -17,7 +17,7 @@
   <link rel="stylesheet" crossorigin href="${path}/resources/assets/compiled/css/app.css">
   <link rel="stylesheet" crossorigin href="${path}/resources/assets/compiled/css/app-dark.css">
   <link rel="stylesheet" crossorigin href="${path}/resources/assets/compiled/css/iconly.css">
-  <link rel="stylesheet" href="${path}/resources/css/ju/headerju.css">
+  <%-- <link rel="stylesheet" href="${path}/resources/css/ju/headerju.css"> --%>
   <link rel="stylesheet" href="${path }/resources/css/sol/managemain.css">
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
@@ -26,9 +26,11 @@
 
 <body>
     <script src="${path }/resources/assets/static/js/initTheme.js"></script>
-    
+    <script>
+    	var path = "${path }";
+    </script>
     <!-- script문 JU -->
-    <script type="text/javascript" src="${path}/resources/js/headerju.js"></script>
+    <%-- <script type="text/javascript" src="${path}/resources/js/headerju.js"></script> --%>
     
     
     <div id="app">
@@ -113,6 +115,7 @@
 				</div>
 			</div>
         </div>
+
         <div id="main">
             <header class="mb-3" style="width:100%;">
             	<div class="headerTitle">
@@ -174,7 +177,8 @@
             		</c:if>
             		<c:if test="${not empty employees }">
             			<c:forEach var="emp" items="${employees }">
-	            			<tr onclick="location.assign('${path }/manage/joinempdetail.do?empNo=${emp.empNo }')">
+            				<input type="text" id="empNo" value="${emp.empNo }" hidden="true">
+	            			<tr onclick="changeEmpDetailView(event)">
 	            				<td>${emp.empName }</td>
 	            				<td>${emp.empId }</td>
 	            				<td>${emp.empBirth }</td>
@@ -270,15 +274,13 @@
             </div>
         </div>
         <div class="action-container">
-        		<button class="btn btn-sm btn-outline-success" onclick="emptyInputValue()">비우기</button>
+        	<button class="btn btn-sm btn-outline-success" onclick="emptyInputValue()">비우기</button>
             <button class="btn btn-sm btn-success" onclick="searchDetailAction(1)">검색</button>
             <button class="btn btn-sm btn-danger" onclick="cancelDetailAction()">취소</button>
         </div>
     </div>
 </body>
-<script>
-	var path = "${path }";
-</script>
+
 <script src="${path }/resources/js/managemain.js"></script>
 <script src="${path }/resources/assets/static/js/components/dark.js"></script>
 <script src="${path }/resources/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>

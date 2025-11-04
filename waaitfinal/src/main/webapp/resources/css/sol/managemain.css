@@ -21,8 +21,8 @@
 	justify-content : right;
 }
 .modal {
-	position:absolute;
-	display:none;
+	position: absolute;
+	display: none;
 	border-radius : 10px;
 	
 	/* justify-content:center; */
@@ -58,8 +58,8 @@
 
 /* searchDetailModal */
 #searchDetailModal {
-	position:absolute;
-	display:inline;
+	position: absolute;
+	display: none;
 	border-radius : 10px;
     border : 1px solid black;
 	

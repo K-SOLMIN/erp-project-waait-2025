@@ -116,6 +116,7 @@
 											<script>
 												document.querySelectorAll("input[name='selectAddressMethod']").forEach(e => {
 													e.addEventListener("click", e => {
+														
 														if(e.target.checked && e.target.value == 'direct') {
 															document.getElementById("directWriteAddress").hidden = false;
 															document.getElementById("joinAddressByApi").hidden = true;
@@ -135,16 +136,32 @@
 												
 												document.addEventListener("DOMContentLoaded", e => {
 													document.getElementById("selectJob").addEventListener("click", e => {
-														if(e.target.value != "L1" && e.target.value != "L2") {
-															document.getElementById("teamContainer").hidden = false;
-															document.getElementById("noDeptOption").hidden = false;
+														const deptLabel = document.querySelector("label[class='form-label dept-label']");
+														const deptSelect = document.getElementById("selectDept");
+														const teamContainer = document.getElementById("teamContainer");
+														const noDeptOption = document.getElementById("noDeptOption");
+														const jobLevel = e.target.value;
+														
+														if(jobLevel == "L1") {
+															deptLabel.hidden = true;													
+															deptSelect.hidden = true;
+															teamContainer.hidden = true;
+														} else if(jobLevel == "L2") {
+															deptLabel.hidden = false;													
+															deptSelect.hidden = false;
+															teamContainer.hidden = true;
+														} else if(jobLevel == "L3") {
+															deptLabel.hidden = false;													
+															deptSelect.hidden = false;
+															teamContainer.hidden = false;
+															noDeptOption.hidden = false;
 															let selectDept = document.getElementById("selectDept");
 														} else {
-															document.getElementById("teamContainer").hidden = true;
-															document.getElementById("noDeptOption").hidden = true;
+															teamContainer.hidden = true;
+															noDeptOption.hidden = true;
 															selectDept.options[0].selected = true;
 														}
-													})
+													});
 													
 													document.getElementById("selectDept").addEventListener("click", e => {
 														const levelCode = document.getElementById("selectJob").value;
@@ -270,8 +287,8 @@
 											</select>
 										</div>
 										<div class="form-group">
-											<label for="selectDept" class="form-label">부서</label>
-											<select id="selectDept" class="form-control">
+											<label for="selectDept" class="form-label dept-label" hidden="true">부서</label>
+											<select id="selectDept" class="form-control dept-select" hidden="true">
 												<c:if test="${not empty depts }">
 													<c:forEach var="dept" items="${depts }">
 														<option value="${dept.deptCode }">부서명 : ${dept.deptName }</option>			
