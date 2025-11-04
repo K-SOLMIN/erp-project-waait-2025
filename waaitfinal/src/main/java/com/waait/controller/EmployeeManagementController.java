@@ -448,8 +448,10 @@ public class EmployeeManagementController {
 	}
 	
 	@PostMapping("/joinempdetail.do")
-	public String joinEmpDetail(Model model, int empNo) {
-		System.out.println("empNo : " + empNo);
+	public String joinEmpDetail(Model model, String empId) {
+		System.out.println("empId : " + empId);
+		Employee searchEmp = service.joinEmpDetail(empId);
+		System.out.println("searchEmp : " + searchEmp);
 		return "empmanage/empdetailview";
 	}
 	

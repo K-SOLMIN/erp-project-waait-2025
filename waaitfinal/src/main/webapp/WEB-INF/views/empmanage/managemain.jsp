@@ -177,7 +177,6 @@
             		</c:if>
             		<c:if test="${not empty employees }">
             			<c:forEach var="emp" items="${employees }">
-            				<input type="text" id="empNo" value="${emp.empNo }" hidden="true">
 	            			<tr onclick="changeEmpDetailView(event)">
 	            				<td>${emp.empName }</td>
 	            				<td>${emp.empId }</td>
@@ -200,7 +199,6 @@
 	            				<td>${emp.remainingAnnualLeave }</td>
 	            			</tr>
             			</c:forEach>
-            			
             		</c:if>
             		</tbody>
             	</table>

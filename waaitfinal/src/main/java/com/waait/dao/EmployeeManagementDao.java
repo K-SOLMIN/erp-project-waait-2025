@@ -125,4 +125,8 @@ public class EmployeeManagementDao {
 		return session.insert("em.enrollEmployee",employee);
 	}
 
+	public Employee joinEmpDetail(SqlSession session, String empId) {
+		return session.selectOne("em.joinEmpDetail", empId);
+	}
+
 }

@@ -165,6 +165,10 @@ public class EmployeeManagementService {
 		return dao.enrollEmployee(session, employee);
 	}
 
+	public Employee joinEmpDetail(String empId) {
+		return dao.joinEmpDetail(session, empId);
+	}
+
 
 
 
