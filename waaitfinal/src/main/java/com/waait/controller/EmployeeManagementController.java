@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +35,7 @@ import com.waait.dto.MovingDepartment;
 import com.waait.service.EmailService;
 import com.waait.service.EmployeeManagementService;
 
+import jakarta.mail.search.IntegerComparisonTerm;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -451,10 +455,15 @@ public class EmployeeManagementController {
 	public String joinEmpDetail(Model model, String empId) {
 		Employee searchEmp = service.joinEmpDetail(empId);
 		
+		String enAge = calcEnAgeUsingBirth(searchEmp.getEmpBirth());
+		String krAge = calcKrAgeUsingBirth(searchEmp.getEmpBirth());
+		
 		searchEmp = setEmpFieldDeptName(searchEmp);
 		searchEmp = setEmpFieldTeamName(searchEmp);
 		
 		model.addAttribute("searchEmp", searchEmp);
+		model.addAttribute("enAge", enAge);
+		model.addAttribute("krAge", krAge);
 		
 		return "empmanage/empdetailview";
 	}
@@ -645,7 +654,7 @@ public class EmployeeManagementController {
 	}
 	
 	
-	public List<Employee> setEmpFieldDeptName(List<Employee> employeeList) {
+	private List<Employee> setEmpFieldDeptName(List<Employee> employeeList) {
 		//List<Employee> employeeList = service.getEmployees();
 		List<Department> departmentList = getDepartmentList();
 
@@ -668,7 +677,7 @@ public class EmployeeManagementController {
 		return employeeList;
 	}
 	
-	public Employee setEmpFieldDeptName(Employee emp) {
+	private Employee setEmpFieldDeptName(Employee emp) {
 		List<Department> departmentList = getDepartmentList();
 		
 		if(emp.getDepartment().getDeptCode() != "D1"
@@ -690,7 +699,7 @@ public class EmployeeManagementController {
 		return emp;
 	}
 	
-	public List<Employee> setEmpFieldTeamName(List<Employee> employeeList) {
+	private List<Employee> setEmpFieldTeamName(List<Employee> employeeList) {
 		List<Department> departmentList = getDepartmentList();
 		
 		employeeList.forEach(emp -> {
@@ -712,7 +721,7 @@ public class EmployeeManagementController {
 		return employeeList;
 	}
 	
-	public Employee setEmpFieldTeamName(Employee emp) {
+	private Employee setEmpFieldTeamName(Employee emp) {
 		List<Department> departmentList = getDepartmentList();
 		
 		departmentList.forEach(dept -> {
@@ -732,7 +741,7 @@ public class EmployeeManagementController {
 		return emp;
 	}
 	
-	public List<Department> getDepartmentList() {
+	private List<Department> getDepartmentList() {
 		List<Department> departmentTableList = service.getDepartment();
 		List<Department> departmentList = departmentTableList.stream().filter(dept -> {
 			return dept.getDeptName().substring(dept.getDeptName().length() - 1).equals("부");
@@ -740,11 +749,40 @@ public class EmployeeManagementController {
 		return departmentList;
 	}
 	
-	public List<Department> getTeamList() {
+	private List<Department> getTeamList() {
 		List<Department> departmentTableList = service.getDepartment();
 		List<Department> teamList = departmentTableList.stream().filter(dept -> {
 			return dept.getDeptName().substring(dept.getDeptName().length() - 1).equals("팀");
 		}).collect(Collectors.toList());
 		return teamList;
+	}
+	
+	//만 나이
+	private String calcEnAgeUsingBirth(String birthDate) {
+		int age = 0;
+		String strAge = null;
+		
+        LocalDate birth = LocalDate.parse(birthDate);
+        LocalDate today = LocalDate.now();
+
+        age = Period.between(birth, today).getYears();
+        strAge = Integer.toString(age);
+        
+        return strAge;
+	}
+	
+	//한국나이
+	private String calcKrAgeUsingBirth(String birthDate) {
+		int age = 0;
+		String strAge = null;
+		
+		LocalDate birth = LocalDate.parse(birthDate);
+        LocalDate today = LocalDate.now();
+        
+        age = today.getYear() - birth.getYear();
+        age++;
+        strAge = Integer.toString(age);
+        
+        return strAge;
 	}
 }
