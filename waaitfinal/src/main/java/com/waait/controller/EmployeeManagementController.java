@@ -449,9 +449,13 @@ public class EmployeeManagementController {
 	
 	@PostMapping("/joinempdetail.do")
 	public String joinEmpDetail(Model model, String empId) {
-		System.out.println("empId : " + empId);
 		Employee searchEmp = service.joinEmpDetail(empId);
-		System.out.println("searchEmp : " + searchEmp);
+		
+		searchEmp = setEmpFieldDeptName(searchEmp);
+		searchEmp = setEmpFieldTeamName(searchEmp);
+		
+		model.addAttribute("searchEmp", searchEmp);
+		
 		return "empmanage/empdetailview";
 	}
 	
@@ -695,16 +699,37 @@ public class EmployeeManagementController {
 					emp.setTeamName("팀 없음");
 				}
 			});
+			
 			if(emp.getTeamName() == null) {
 				emp.setTeamName(emp.getDepartment().getDeptName());
 			}
+			
 			if(emp.getDepartment().getDeptCode().equals("D1")) {
 				emp.setTeamName("팀 없음");
 			}
-			
 		});
 		
 		return employeeList;
+	}
+	
+	public Employee setEmpFieldTeamName(Employee emp) {
+		List<Department> departmentList = getDepartmentList();
+		
+		departmentList.forEach(dept -> {
+			if(emp.getDepartment().getDeptCode().equals(dept.getDeptCode())) {
+				emp.setTeamName("팀 없음");
+			}
+		});
+		
+		if(emp.getTeamName() == null) {
+			emp.setTeamName(emp.getDepartment().getDeptName());
+		}
+		
+		if(emp.getDepartment().getDeptCode().equals("D1")) {
+			emp.setTeamName("팀 없음");
+		}
+		
+		return emp;
 	}
 	
 	public List<Department> getDepartmentList() {

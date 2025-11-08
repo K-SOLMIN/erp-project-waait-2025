@@ -57,8 +57,9 @@ function ajaxPagingForSearch(pageNo, url, searchType, searchValue) {
 document.getElementById("searchDetailModal").style.display = "none";
 
 const changeEmpDetailView = (e) => {
-	let empId = e.currentTarget.children[1].innerText;
-	empId = parseInt(empId);
+	const empId = e.currentTarget.children[1].innerText;
+
+	console.log("empId : " + empId);
 	
 	const form = document.createElement("form");
 	const hiddenInput = document.createElement("input");
