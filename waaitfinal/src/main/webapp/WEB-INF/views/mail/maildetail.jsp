@@ -233,12 +233,12 @@
 				.then(data => {
 					console.log(data);
 					if(data == 1) {
-						alert("즐겨찾기 추가");
+						alert("즐겨찾기에 추가되었습니다");
 						applicationBoolean = true;
 						document.getElementById("iconPath").setAttribute("xlink:href","${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill");
 						document.getElementById("colorDecisionSpan").className = "favorite text-warning";
 					} else {
-						alert("실패");
+						alert("알수없는 오류로 즐겨찾기 등록에 실패했습니다.");
 					}
 				});
 			} else {
@@ -247,12 +247,12 @@
 				.then(data => {
 					console.log(data);
 					if(data == 1) {
-						alert("즐겨찾기 해제");
+						alert("즐겨찾기가 해제되었습니다.");
 						applicationBoolean = false;
 						document.getElementById("iconPath").setAttribute("xlink:href","${path }/resources/assets/static/images/bootstrap-icons.svg#star");
 						document.getElementById("colorDecisionSpan").className = "favorite";
 					} else {
-						alert("실패");
+						alert("알수없는 오류로 즐겨찾기 등록에 실패했습니다.");
 					}
 				});
 			}

@@ -356,11 +356,22 @@ public class MailController {
 	
 	@GetMapping("/addfavorite.do")
 	public @ResponseBody int addFavoriteMail(String mailNo, String selectedMailBox) {
-		System.out.println("selectedMailBox : " + selectedMailBox);
-		if(selectedMailBox.equals("받은메일함")) {
-			return service.addFavoriteMail(mailNo);			
+		String loginEmpEmail = getLoginEmpInfo().getEmpEmail();
+		
+		if(selectedMailBox != null) {
+			if(selectedMailBox.equals("받은메일함")) {
+				return service.addFavoriteMail(mailNo);
+			} else {
+				return service.addSenderFavoriteMail(mailNo);
+			}
 		} else {
-			return service.addSenderFavoriteMail(mailNo);
+			String senderMailAddress = service.joinMailByMailNo(mailNo);
+			
+			if(loginEmpEmail.equals(senderMailAddress)) {
+				return service.addSenderFavoriteMail(mailNo);
+			} else {
+				return service.addFavoriteMail(mailNo);
+			}
 		}
 	}
 	

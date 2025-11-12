@@ -91,6 +91,10 @@ public class MailDao {
 		return session.update("mail.addFavoriteMail", mailNo);
 	}
 	
+	public String joinMailByMailNo(SqlSession session, String mailNo) {
+		return session.selectOne("mail.joinMailByMailNo", mailNo);
+	}
+	
 	public int addSenderFavoriteMail(SqlSession session, String mailNo) {
 		return session.update("mail.addSenderFavoriteMail", mailNo);
 	}

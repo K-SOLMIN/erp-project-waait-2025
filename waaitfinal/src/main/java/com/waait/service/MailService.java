@@ -108,6 +108,10 @@ public class MailService {
 		return result;
 	}
 	
+	public String joinMailByMailNo(String mailNo) {
+		return dao.joinMailByMailNo(session, mailNo);
+	}
+	
 	public int addSenderFavoriteMail(String mailNo) {
 		return dao.addSenderFavoriteMail(session, mailNo);
 	}
