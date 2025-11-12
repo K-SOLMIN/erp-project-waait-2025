@@ -99,8 +99,12 @@ public class MailDao {
 		return session.update("mail.addSenderFavoriteMail", mailNo);
 	}
 
-	public int cancelAddFavorite(SqlSession session, Map<String, Object> sqlParam) {
-		return session.update("mail.cancelAddFavotie", sqlParam);
+	public int cancelReceiverAddFavorite(SqlSession session, String mailNo) {
+		return session.update("mail.cancelReceiverAddFavorite", mailNo);
+	}
+	
+	public int cancelSenderFavorite(SqlSession session, String mailNo) {
+		return session.update("mail.cancelSenderFavorite", mailNo);
 	}
 
 	public int selectSequence(SqlSession session) {

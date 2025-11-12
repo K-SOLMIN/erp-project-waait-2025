@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <c:set var="path" value="${pageContext.request.contextPath }"/>
+<c:set var ="loginEmp" value="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal}"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,24 +56,48 @@
 								<div class="information d-sm-flex d-none align-items-center">
 									<small class="text-muted me-3">${mail.mailWriteDate }</small> 
 										<button class="icon-button" onclick="addFavorite()">
-											<span id="colorDecisionSpan" class=
-												<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+										<c:forEach var="receiver" items="${mail.receivers}">
+											<c:if test="${receiver.mailReceiverAddress eq loginEmp.empEmail}">
+												<span id="colorDecisionSpan" class=
+													<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+			                                        	"favorite text-warning"
+			                                        </c:if>
+													<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+			                                        	"favorite"
+			                                        </c:if>
+			                                	>
+													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor" style="padding-bottom: 2px;">
+			                                            <use xlink:href=<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+					                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
+					                                                    </c:if>
+																		<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+					                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
+					                                                 	</c:if> id="iconPath" 
+					                                    />
+			                                        </svg>
+			                                    </span>
+			                                </c:if>
+		                                </c:forEach>
+		                                <c:if test="${mail.senderMailAddress eq loginEmp.empEmail}">
+		                                	<span id="colorDecisionSpan" class=
+												<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
 		                                        	"favorite text-warning"
 		                                        </c:if>
-												<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+												<c:if test="${mail.senderStatus != '즐겨찾기' }" >
 		                                        	"favorite"
 		                                        </c:if>
-		                                	>
+			                                >
 												<svg class="bi" width="1.5em" height="1.5em" fill="currentColor" style="padding-bottom: 2px;">
-		                                            <use xlink:href=<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
-				                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
-				                                                    </c:if>
-																	<c:if test="${mail.mailStatus != '즐겨찾기' }" >
-				                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
-				                                                 	</c:if> id="iconPath" 
+		                                            <use xlink:href=<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
+	                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
+	                                                    </c:if>
+														<c:if test="${mail.senderStatus != '즐겨찾기' }" >
+	                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
+	                                                 	</c:if> id="iconPath" 
 				                                    />
 		                                        </svg>
-		                                    </span>
+			                            	</span>
+		                                </c:if>
                                         </button>
 									<div class="dropdown">
 										<!-- <a href="#" class="dropdown-toggle" id="third-open-menu"
@@ -224,7 +249,17 @@
 	}
 	
 	const addFavorite = (function() {
-		let applicationBoolean = ${mail.mailStatus eq '즐겨찾기' ? true : false}
+		const senderBoolean = ${mail.senderMailAddress eq loginEmp.empEmail ? true : false};
+		let applicationBoolean;
+		
+		if(senderBoolean) {
+			applicationBoolean = ${mail.senderStatus eq '즐겨찾기' ? true : false};
+		} else {
+			applicationBoolean = ${mail.mailStatus eq '즐겨찾기' ? true : false};
+		}
+		
+		console.log("applicationBoolean : " + applicationBoolean);
+		
 		const addFavorite = () => {
 			const mailNo = ${mail.mailNo};
 			if(applicationBoolean == false) {

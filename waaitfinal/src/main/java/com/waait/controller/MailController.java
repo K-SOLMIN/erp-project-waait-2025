@@ -357,30 +357,45 @@ public class MailController {
 	@GetMapping("/addfavorite.do")
 	public @ResponseBody int addFavoriteMail(String mailNo, String selectedMailBox) {
 		String loginEmpEmail = getLoginEmpInfo().getEmpEmail();
+		String senderMailAddress = service.joinMailByMailNo(mailNo);
 		
-		if(selectedMailBox != null) {
-			if(selectedMailBox.equals("받은메일함")) {
-				return service.addFavoriteMail(mailNo);
-			} else {
-				return service.addSenderFavoriteMail(mailNo);
-			}
+		System.out.println("loginEmpEmail : " + loginEmpEmail + " senderMailAddress : " + senderMailAddress);
+		
+		if(loginEmpEmail.equals(senderMailAddress)) {
+			System.out.println("sender update");
+			return service.addSenderFavoriteMail(mailNo);
 		} else {
-			String senderMailAddress = service.joinMailByMailNo(mailNo);
-			
-			if(loginEmpEmail.equals(senderMailAddress)) {
-				return service.addSenderFavoriteMail(mailNo);
-			} else {
-				return service.addFavoriteMail(mailNo);
-			}
+			System.out.println("receiver update");
+			return service.addFavoriteMail(mailNo);
 		}
+		
+//		if(selectedMailBox != null) {
+//			if(selectedMailBox.equals("받은메일함")) {
+//				return service.addFavoriteMail(mailNo);
+//			} else {
+//				return service.addSenderFavoriteMail(mailNo);
+//			}
+//		} else {
+//			
+//			if(loginEmpEmail.equals(senderMailAddress)) {
+//				return service.addSenderFavoriteMail(mailNo);
+//			} else {
+//				return service.addFavoriteMail(mailNo);
+//			}
+//		}
 	}
 	
 	@GetMapping("/canceladdfavorite.do")
 	public @ResponseBody int cancelAddFavorite(String mailNo) {
-		long empNo = getLoginEmpInfo().getEmpNo();
-		Map<String, Object> sqlParam = Map.of("empNo", empNo, "mailNo", mailNo);
+		String loginEmpEmail = getLoginEmpInfo().getEmpEmail();
+		String senderMailAddress = service.joinMailByMailNo(mailNo);
 		
-		return service.cancelAddFavorite(sqlParam);
+		if(loginEmpEmail.equals(senderMailAddress)) {
+			return service.cancelSenderFavorite(mailNo);
+		} else {
+			return service.cancelReceiverAddFavorite(mailNo);			
+		}
+		
 	}
 	
 	@GetMapping("/writemail.do")

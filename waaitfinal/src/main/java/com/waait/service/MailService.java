@@ -116,8 +116,12 @@ public class MailService {
 		return dao.addSenderFavoriteMail(session, mailNo);
 	}
 
-	public int cancelAddFavorite(Map<String, Object> sqlParam) {
-		return dao.cancelAddFavorite(session, sqlParam);
+	public int cancelReceiverAddFavorite(String mailNo) {
+		return dao.cancelReceiverAddFavorite(session, mailNo);
+	}
+	
+	public int cancelSenderFavorite(String mailNo) {
+		return dao.cancelSenderFavorite(session, mailNo);
 	}
 	
 	@Transactional
@@ -360,9 +364,5 @@ public class MailService {
 	public List<Mail> joinSenderFavoriteMail(long empNo) {
 		return dao.joinSenderFavoriteMail(session, empNo);
 	}
-
-
-
-
 
 }
