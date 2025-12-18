@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -816,6 +817,45 @@ public class MailController {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@GetMapping("/improvedfiledownload.do")
+	public void improvedFileDownload(HttpServletResponse response, HttpSession session,
+										String mailRenamedFileName, String mailOriginalFileName) {
+		
+		String filePath = session.getServletContext().getRealPath("/resources/upload/mail/");
+		File downloadFile = new File(filePath + mailRenamedFileName);
+		String mimeType = session.getServletContext().getMimeType(mailOriginalFileName);
+		
+		if(!downloadFile.exists()) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		if(mimeType == null) {
+			mimeType = "application/octet-stream";
+		}
+		
+		try(FileInputStream fis = new FileInputStream(downloadFile);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+					BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream())) {
+			String encFileName = URLEncoder.encode(mailOriginalFileName,"UTF-8").replaceAll("\\+", "%20");
+			byte[] byteCode = new byte[8192];
+			int data = 0;
+			
+			response.setContentType(mimeType);
+			response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encFileName);
+			
+			while((data = bis.read(byteCode)) != -1) {
+				bos.write(byteCode, 0, data);
+			}
+			
+			bos.flush();
+			
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@GetMapping("/mailsettingview.do")
