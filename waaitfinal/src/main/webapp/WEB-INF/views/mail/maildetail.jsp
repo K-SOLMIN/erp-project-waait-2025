@@ -245,7 +245,7 @@
 <script src="${path }/resources/assets/compiled/js/app.js"></script>
 <script>
 	const mailFileDownload = (oriName, renamed) => {
-		location.assign("${path }/mail/filedownload.do?mailOriginalFileName=" + oriName + "&mailRenamedFileName=" + renamed);
+		location.assign("${path }/mail/improvedfiledownload.do?mailOriginalFileName=" + oriName + "&mailRenamedFileName=" + renamed);
 	}
 	
 	const addFavorite = (function() {
