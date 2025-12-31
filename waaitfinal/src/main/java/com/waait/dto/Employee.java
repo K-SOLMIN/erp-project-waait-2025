@@ -52,11 +52,16 @@ public class Employee implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Set<GrantedAuthority> auth  = new HashSet<>();
-	if(deptCode.equals("L1")) { //사원에 대한처리부분
-		auth.add(new SimpleGrantedAuthority(EmpAuthority.ADMIN.name()));
+		if(deptCode.equals("L1")) { //사원에 대한처리부분
+			auth.add(new SimpleGrantedAuthority(EmpAuthority.ADMIN.name()));
+		}
 		
-	}
-	auth.add(new SimpleGrantedAuthority(EmpAuthority.USER.name()));
+		if(deptCode.equals("D5")) {
+			auth.add(new SimpleGrantedAuthority(EmpAuthority.EMPMANAGE.name()));
+		}
+		
+		auth.add(new SimpleGrantedAuthority(EmpAuthority.USER.name()));
+		
 		return auth;
 	}
 	@Override

@@ -27,6 +27,7 @@ public class SecurityConfig {
 							.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.INCLUDE).permitAll()
 						  .requestMatchers("/logininfo","/login", "/WEB-INF/views/**","/resources/**").permitAll()
 						 .requestMatchers("/admin").hasAnyAuthority(EmpAuthority.ADMIN.name())
+						 .requestMatchers("/manage").hasAnyAuthority(EmpAuthority.EMPMANAGE.name())
 						.anyRequest().authenticated()
 						)
 				.formLogin(formLogin -> formLogin.loginPage("/login")
