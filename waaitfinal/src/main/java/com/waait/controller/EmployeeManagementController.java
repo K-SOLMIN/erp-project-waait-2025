@@ -1,12 +1,15 @@
 package com.waait.controller;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +38,7 @@ import com.waait.dto.MovingDepartment;
 import com.waait.service.EmailService;
 import com.waait.service.EmployeeManagementService;
 
-import jakarta.mail.search.IntegerComparisonTerm;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -216,6 +219,44 @@ public class EmployeeManagementController {
 		model.addAttribute("teams", teamList);
 		
 		return "empmanage/teammanage";
+	}
+	
+	@GetMapping("/manage/downloadprofile.do")
+	public void downloadProfile(HttpSession session, HttpServletResponse response,
+									String rename, String oriname) {
+		String filePath = session.getServletContext().getRealPath("/resources/upload/emp/profile/");
+		File profile = new File(filePath + rename);
+		String mimeType = session.getServletContext().getMimeType(oriname);
+		
+		if(!profile.exists()) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		
+		if(mimeType == null) {
+			mimeType = "application/octet-stream";
+		}
+		
+		try(FileInputStream fis = new FileInputStream(profile);
+				BufferedInputStream bis = new BufferedInputStream(fis);
+					BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream())) {
+			String encodingName = URLEncoder.encode(rename, "UTF-8").replaceAll("\\+", "%20");
+			
+			response.setContentType(mimeType);
+			response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodingName);
+			
+			byte[] byteData = new byte[4196];
+			int length = 0;
+			
+			while((length = bis.read(byteData)) != -1) {
+				bos.write(byteData, 0, length);
+			}
+			
+			bos.flush();
+			
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	//test

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.waait.dto.Employee;
@@ -825,13 +826,16 @@ public class MailController {
 		
 		String filePath = session.getServletContext().getRealPath("/resources/upload/mail/");
 		File downloadFile = new File(filePath + mailRenamedFileName);
-		String mimeType = session.getServletContext().getMimeType(mailOriginalFileName);
+		String mimeType = session.getServletContext().getMimeType(filePath + mailRenamedFileName);
+		
+		System.out.println("filePath : " + filePath);
+		System.out.println("mimeType : " + mimeType);
 		
 		if(!downloadFile.exists()) {
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
-		
+			
 		if(mimeType == null) {
 			mimeType = "application/octet-stream";
 		}
