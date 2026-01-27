@@ -1,6 +1,6 @@
 
 
-# ERP시스템 waait
+# 그룹웨어 waait
 <div style="width: 100px; overflow: hidden;">
     <img src="https://github.com/user-attachments/assets/221ee9a3-5c1a-4ec2-8311-9d02b13c9830" alt="WAAIT Logo" style="width: 40%;">
 </div>
