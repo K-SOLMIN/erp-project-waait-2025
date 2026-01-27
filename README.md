@@ -6,7 +6,7 @@
 </div>
 <br>
 
-"**WE ARE ALL IN THIS TOGETHER**"의 약자인 **WAAIT**은 협업과 소통을 중심으로 한 **사내 ERP 시스템**입니다. <br>
+"**WE ARE ALL IN THIS TOGETHER**"의 약자인 **WAAIT**은 협업과 소통을 중심으로 한 **사내 그룹웨어 시스템**입니다. <br>
 직관적인 UI를 통해 부서 간, 개인 간의 일정을 관리하고, 출퇴근 현황을 손쉽게 기록하며, 효율적인 조직 운영을 지원합니다.
 <br>
 <br>
