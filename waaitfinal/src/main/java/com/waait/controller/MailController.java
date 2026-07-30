@@ -133,7 +133,7 @@ public class MailController {
 		List<MyMailBox> myMailBoxList = service.getMyMailBox(empNo);
 		
 		Map<String, Object> spamMailParam = Map.of("loginMemberEmailDomain", mailReceiverAddress, "spamDomains", spamDomains);
-		if(spamDomains != null && spamDomains.size() > 0 && !spamDomains.isEmpty()) {
+		if(!spamDomains.isEmpty()) {
 			spamMailCount = service.getSpamMailCount(spamMailParam);
 		}
 		

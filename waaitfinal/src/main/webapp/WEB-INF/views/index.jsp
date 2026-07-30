@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <c:set var="path" value="${pageContext.request.contextPath }"/>
 <c:set var="employee"
 	value="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal}" />
@@ -206,11 +207,15 @@
                                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
                                     <h6 class="text-muted font-semibold">근무시간</h6>
                                     <c:if test="${not empty workTotal }">
-	                                    <h6>${workTotal.get(0).workStart}</h6>                                                                    
-	                                    <h6>${workTotal.get(0).workEnd}</h6>
+	                                    <h6 class="font-extrabold mb-0">
+	                                    	<fmt:formatDate value="${workTotal.get(0).workStart}" pattern="HH:mm" />
+	                                    	<c:if test="${not empty workTotal.get(0).workEnd}">
+	                                    		 ~ <fmt:formatDate value="${workTotal.get(0).workEnd}" pattern="HH:mm" />
+	                                    	</c:if>
+	                                    </h6>
                                     </c:if>
                                     <c:if test="${empty workTotal }">
-                                    	<h6>근무시간이 없습니다.</h6>
+                                    	<h6 class="font-extrabold mb-0">근무 기록 없음</h6>
                                     </c:if>
                                 </div>
                             </div> 
@@ -291,93 +296,51 @@
                 <div class="col-12 col-xl-4">
                     <div class="card">
                         <div class="card-header">
-                            <h4>공지사항</h4>                        
+                            <h4>공지사항</h4>
+                        </div>
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                    	<div>
-                                    	<!-- 공지사항 더미 시작 -->
-										    <section class="section">
-										        <div class="card">
-										            <div class="card-header">
-										            </div>
-										            <div class="card-body">
-										                <table class="table table-striped" id="table1">
-										                    <thead>
-										                        <tr>
-										                            <th>작성 부서</th>
-										                            <th>제목</th>                            
-										                        </tr>
-										                    </thead>
-										                    <tbody>
-										                        <tr>
-										                            <td>인사팀 </td>
-										                            <td>연말 정산 서류 제출 안내</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>영업팀</td>
-										                            <td>3분기 목표 달성 전략 발표</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>개발2팀</td>
-										                            <td>시스템 업그레이드 일정 공지</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>재정팀</td>
-										                            <td>2분기 재무 보고서 제출 요청</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>경영관리부</td>
-										                            <td>사내 규정 변경 사항 안내</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>개발1팀</td>
-										                            <td>신규 프로젝트 계획 회의 안내</td>                            
-										                        </tr>
-										                        <tr>
-										                            <td>인사팀</td>
-										                            <td>복리후생 제도 변경 안내
-										                            </td>                            
-										                        </tr>                    
-										                    </tbody>
-										                </table>
-										            </div>
-										        </div>										
-										    </section>
-										    <!-- 공지사항 더미 여기까지 -->
-										</div>
-                                    </div>
-                                </div>                                                                                               
+                            <!-- 공지사항 더미 시작 -->
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="table1">
+                                    <thead>
+                                        <tr>
+                                            <th>작성 부서</th>
+                                            <th>제목</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>인사팀</td>
+                                            <td>연말 정산 서류 제출 안내</td>
+                                        </tr>
+                                        <tr>
+                                            <td>영업팀</td>
+                                            <td>3분기 목표 달성 전략 발표</td>
+                                        </tr>
+                                        <tr>
+                                            <td>개발2팀</td>
+                                            <td>시스템 업그레이드 일정 공지</td>
+                                        </tr>
+                                        <tr>
+                                            <td>재정팀</td>
+                                            <td>2분기 재무 보고서 제출 요청</td>
+                                        </tr>
+                                        <tr>
+                                            <td>경영관리부</td>
+                                            <td>사내 규정 변경 사항 안내</td>
+                                        </tr>
+                                        <tr>
+                                            <td>개발1팀</td>
+                                            <td>신규 프로젝트 계획 회의 안내</td>
+                                        </tr>
+                                        <tr>
+                                            <td>인사팀</td>
+                                            <td>복리후생 제도 변경 안내</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            </div>
-                            
-                            <!-- 이번주 일정 -->
-                            <div class="row">
-                                <div class="col-7">
-									<!-- 이번주 일정 관련해서 여기 들어와야함  -->
-                                </div>                                
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-   
-                                    </div>
-                                </div>
-                                <div class="col-5">
-                                    
-                                </div>
-                                <div class="col-12">
-                                    <div id="chart-india"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-7">
-                                    <div class="d-flex align-items-center">
-                                    </div>
-                                </div>                                                              
-                            </div>
+                            <!-- 공지사항 더미 여기까지 -->
                         </div>
                     </div>
                 </div>
@@ -467,22 +430,23 @@
                             <img src="${path}/resources/assets/compiled/jpg/1.jpg" alt="Face 1">
                         </div>
                         <div class="ms-3 name">
-                        	<br>
                             <h5 class="font-bold">${employee.empName }</h5>
-                            <h6 class="text-muted mb-0">${employee.empEmail}</h6><br>
+                            <h6 class="text-muted mb-0">${employee.empEmail}</h6>
+                            <div class="mt-2">
 								<c:if test="${work!=null}">
-								<button>${work.workStart.getHours()}:${work.workStart.getMinutes()} </button>
+								<button class="btn btn-primary" disabled>${work.workStart.getHours()}:${work.workStart.getMinutes()}</button>
 								<c:if test="${work.workEnd == null }">
-								<button onclick="leaveWork()">퇴근</button>
+								<button class="btn btn-primary" onclick="leaveWork()">퇴근</button>
 								</c:if>
 								<c:if test="${work.workEnd != null }">
-								<button>${work.workEnd.getHours()}:${work.workEnd.getMinutes()} </button>
-								</c:if>	
+								<button class="btn btn-primary" disabled>${work.workEnd.getHours()}:${work.workEnd.getMinutes()}</button>
+								</c:if>
 								</c:if>
 								<c:if test="${work==null}">
-								<button onclick="work()" class="btn btn-primary">출근</button> 
-								<button onclick="noWork()" class="btn btn-primary">퇴근</button><br>
+								<button onclick="work()" class="btn btn-primary">출근</button>
+								<button onclick="noWork()" class="btn btn-primary">퇴근</button>
 								</c:if>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -527,10 +491,9 @@
             <div class="card">
                 <div class="card-header">
                     <h4>승인 대기중 문서</h4>
-                    <h3></h3>
                 </div>
                 <div class="card-body">
-                    <div id="chart-visitors-profile"></div>                                                                              
+                    <p class="text-muted mb-0">대기중인 문서가 없습니다.</p>
                 </div>
             </div>
         </div>
