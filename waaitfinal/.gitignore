@@ -36,3 +36,7 @@ src/main/resources/*.properties
 src/main/resources/**/*.xml
 .dbeaver/
 Scripts/
+
+# my add gitignore
+specification
+.claude
