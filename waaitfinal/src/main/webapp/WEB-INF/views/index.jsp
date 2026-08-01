@@ -284,10 +284,10 @@
                         <div class="card-header">
                             <h4>조직도</h4>                            
                         </div>
-                        <div class="card-body" style="display: flex; flex-direction:row;" >
-                            <div style="width: 1100px;">
-                            	<div id="tree"></div>
-                            </div>                            
+                        <div class="card-body">
+                            <div style="width: 100%; height: 600px; overflow-x: auto;">
+                            	<div id="tree" style="height: 100%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

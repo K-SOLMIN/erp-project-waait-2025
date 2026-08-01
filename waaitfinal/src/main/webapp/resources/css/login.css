@@ -1,20 +1,24 @@
 @charset "UTF-8";
+html, body{
+    margin: 0;
+    height: 100%;
+}
 #mainPage{
     display: flex;
+    min-height: 100vh;
 }
 #mainPage>div{
     width: 50%;
-   
-    height: 900px;
+
     display: flex;
-    
+
 }
 #leftPage{
     background-color: #0033FF;
     background-image:url(../images/main.png);
     background-repeat: no-repeat; /* 이미지 반복 여부 */
     background-position: center; /* 이미지 위치 */
-    background-size: 1000px; /* 이미지 크기 */
+    background-size: 60%; /* 이미지 크기 */
     display: flex;
 }
 #textBox{
@@ -121,4 +125,33 @@
 #login:hover{
     background-color: skyblue;
     color: black;
+}
+
+@media (max-width: 992px){
+    #leftPage{
+        display: none;
+    }
+    #mainPage>div{
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px){
+    #loginForm{
+        width: 100%;
+        max-width: 320px;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+    #username,
+    #password,
+    #login{
+        width: 100%;
+        max-width: none;
+        margin-left: 0;
+        box-sizing: border-box;
+    }
+    #loginForm>a{
+        margin-left: 0;
+    }
 }

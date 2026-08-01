@@ -2,12 +2,13 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <c:set var="path" value="${pageContext.request.contextPath }" />
-<link rel="stylesheet" type="text/css" href="${path }/resources/css/login.css">
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
+<link rel="stylesheet" type="text/css" href="${path }/resources/css/login.css">
 </head>
 <style></style>
 <body>
@@ -19,7 +20,7 @@
 				</div>
 
 				<form action="${path }/logininfo" method="post">
-					<input type="text" placeholder="Username" id="Username" name="user">
+					<input type="text" placeholder="Username" id="username" name="user">
 					<input type="password" placeholder="Password" id="password" name="password">
 					<input type="submit" value="log in" id="login">
 				</form>
