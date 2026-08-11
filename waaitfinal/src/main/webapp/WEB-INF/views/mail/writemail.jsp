@@ -29,7 +29,7 @@
 		<header class="mb-3">
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="logo">
-					<a href="javascript:goMailMain()"><img src="${path }/resources/images/logo.png" alt="Logo" width="150px" style="height:90px"></a>
+					<a href="javascript:goMailMain()"><img src="${path }/resources/images/logo.png" alt="Logo" width="130px" style="height:90px"></a>
 				</div>
 				<button type="button" class="btn btn-outline-secondary" onclick="goMailMain()">
 					<i class="bi bi-arrow-left"></i> 메일함으로

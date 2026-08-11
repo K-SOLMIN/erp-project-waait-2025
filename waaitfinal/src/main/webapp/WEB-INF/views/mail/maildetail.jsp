@@ -115,7 +115,7 @@
 		<header class="mb-3">
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="logo">
-					<a href="${path }/"><img src="${path }/resources/images/logo.png" alt="Logo" width="150px" style="height:90px"></a>
+					<a href="${path }/"><img src="${path }/resources/images/logo.png" alt="Logo" width="130px" style="height:90px"></a>
 				</div>
 				<button type="button" class="btn btn-outline-secondary" onclick="location.assign('${path }/mail/mailmain.do')">
 					<i class="bi bi-arrow-left"></i> 메일함으로

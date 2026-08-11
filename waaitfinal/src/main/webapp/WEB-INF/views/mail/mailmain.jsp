@@ -50,7 +50,7 @@
 								to implement messaging.</p>
 						</div> -->
 						<div class="logo" style="height: 100; ">
-			                <a href="${path }/"><img src="/resources/images/logo.png" alt="Logo" srcset="" width="150px" style="height:90px"></a>
+			                <a href="${path }/"><img src="/resources/images/logo.png" alt="Logo" srcset="" width="130px" style="height:90px"></a>
 			            </div>
 						<!-- <div class="col-12 col-md-6 order-md-2 order-first">
 							<nav aria-label="breadcrumb"
