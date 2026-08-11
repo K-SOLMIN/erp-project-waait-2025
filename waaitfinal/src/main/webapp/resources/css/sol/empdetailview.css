@@ -405,8 +405,13 @@
     text-align: center;
 }
 
+/* 테마가 .bi에 width/height 1rem을 고정해 둬서 글자만 키우면 상자 밖으로 넘친다 */
 .emp-detail .empty-card i {
+    display: block;
+    width: auto;
+    height: auto;
     font-size: 2.5rem;
+    line-height: 1;
     color: var(--ink-soft);
 }
 

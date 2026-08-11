@@ -107,7 +107,8 @@ public class EmployeeManagementService {
 			} else {
 				teamSqlParam.put("newDeptCode", (String) sqlParam.get("newDeptCode"));
 				teamSqlParam.put("teamCode", "D" + (newDepartmentSeq + 1));
-				teamSqlParam.put("teamName", newTeamNameStr);
+				//팀이 하나일 때만 '팀'이 빠져 이름이 제각각이었다
+				teamSqlParam.put("teamName", newTeamNameStr + "팀");
 				result = dao.enrollDepartmentWithTeam(session, teamSqlParam);
 			}
 		}

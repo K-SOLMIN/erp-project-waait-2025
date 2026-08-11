@@ -616,7 +616,8 @@ public class EmployeeManagementController {
 		String newDeptCode = "D" + (existDeptCode.get(0) + 1);
 		
 		Map<String, Object> sqlParam = new HashMap<String, Object>();
-		if(teamName == "") {
+		//문자열 비교는 equals로 해야 한다. ==로는 빈 문자열이 걸러지지 않아 이름 없는 팀이 생성됐다
+		if(teamName == null || teamName.isBlank()) {
 			System.out.println("공란");
 			sqlParam.put("newDeptCode", newDeptCode);
 			sqlParam.put("newDeptName", deptName + "부");
@@ -634,11 +635,9 @@ public class EmployeeManagementController {
 	}
 	
 	@PostMapping("/modifydeptname.do")
-	public String modifyDeptName(String deptCode, String deptName, Model model) {
-		int result = 0;
-		Map<String, String> sqlParam = Map.of("deptCode", deptCode, "deptName", deptName);
-		result = service.modifyDeptName(sqlParam);
-		return "empmanage/responsepage/deptlist";
+	public @ResponseBody int modifyDeptName(String deptCode, String deptName) {
+		Map<String, String> sqlParam = Map.of("deptCode", deptCode, "deptName", deptName + "부");
+		return service.modifyDeptName(sqlParam);
 	}
 	
 	@PostMapping("/deletedept.do")

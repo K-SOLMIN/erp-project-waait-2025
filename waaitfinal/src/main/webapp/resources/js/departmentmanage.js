@@ -1,168 +1,243 @@
 /**
- * 
+ * 부서 관리
+ * - 왼쪽 부서 목록에서 하나를 고르면 오른쪽에 그 부서의 팀 패널이 열린다.
+ * - 등록/수정/삭제가 성공하면 화면을 다시 불러 목록과 개수를 실제 값에 맞춘다.
  */
-const addTeamInput = () => {
-	const inputCount = document.querySelectorAll("input[name='teamInput']").length;
-	if(inputCount > 4) {
-		alert("입력란은 5개까지만 생성 가능합니다.");
-	} else {
-		//const $button = document.createElement("button");
-		const $input = document.createElement("input");
-		const $div = document.createElement("div");
-		
-		$input.setAttribute("type", "text");
-		$input.setAttribute("name", "teamInput");
-		$input.setAttribute("class", "form-control");
-		$input.setAttribute("placeholder", "ex)개발1 o 개발1팀 x 뒤에 팀은 빼고입력하세요");
-		
-		/*$button.setAttribute("class", "btn btn-outline-success");
-		$button.setAttribute("onclick", "addTeamInput()");
-		$button.setAttribute("style", "margin-left:4px;");
-		$button.innerHTML = "+";*/
-		
-		const div = document.querySelector(".teamInputContainer");
-		
-		$div.appendChild($input);
-		//$div.appendChild($button);
-		
-		div.appendChild($div);
-	}
-}
 
-const deleteTeamInput = () => {
-	console.log("오긴한겨?");
-	const inputCount = document.querySelectorAll("input[name='teamInput']").length;
-	
-	if(inputCount > 0) {
-		const teamInputContainer = document.querySelector(".teamInputContainer");
-		teamInputContainer.lastElementChild.remove();
+const MAX_TEAM_INPUT = 5;
+
+/* ---------- 부서 선택 ---------- */
+
+const selectDept = (deptCode) => {
+	document.querySelectorAll(".dept-row").forEach(row => {
+		row.classList.toggle("is-selected", row.dataset.code === deptCode);
+	});
+	document.querySelectorAll(".dept-panel").forEach(panel => {
+		panel.hidden = panel.dataset.panel !== deptCode;
+	});
+
+	const noSelection = document.getElementById("noSelection");
+	if(noSelection) noSelection.hidden = true;
+};
+
+/* ---------- 새 부서 등록 ---------- */
+
+const createPanel = () => document.getElementById("createPanel");
+
+const showCreateError = (message) => {
+	const note = document.getElementById("createError");
+	note.textContent = message;
+	note.classList.add("is-error");
+	note.hidden = false;
+};
+
+const clearCreateError = () => {
+	const note = document.getElementById("createError");
+	note.hidden = true;
+	note.textContent = "";
+};
+
+const openCreatePanel = () => {
+	createPanel().hidden = false;
+	document.getElementById("deptNameInput").focus();
+};
+
+const closeCreatePanel = () => {
+	createPanel().hidden = true;
+	document.getElementById("deptNameInput").value = "";
+	document.getElementById("teamFields").innerHTML = "";
+	clearCreateError();
+};
+
+const addTeamInput = () => {
+	const fields = document.getElementById("teamFields");
+	if(fields.children.length >= MAX_TEAM_INPUT) {
+		showCreateError("팀은 최대 " + MAX_TEAM_INPUT + "개까지 함께 등록할 수 있습니다.");
+		return;
 	}
-}
+	clearCreateError();
+
+	const row = document.createElement("div");
+	row.className = "team-field";
+	row.innerHTML =
+		'<div class="affix-field">' +
+			'<input type="text" class="form-control" name="teamInput" placeholder="개발1" autocomplete="off">' +
+			'<span class="affix">팀</span>' +
+		'</div>' +
+		'<button type="button" class="icon-btn" data-action="removeTeam" aria-label="팀 입력란 삭제">' +
+			'<i class="bi bi-x-lg"></i>' +
+		'</button>';
+
+	fields.appendChild(row);
+	row.querySelector("input").focus();
+};
+
+/**
+ * 서버가 이름 뒤에 '부'/'팀'을 붙이므로 사용자가 직접 붙이면 '개발부부'가 된다.
+ * 입력값을 그대로 두고 안내만 하도록 검사한다.
+ */
+const validateName = (value, suffix) => {
+	const name = value.trim();
+	if(name.length === 0) return "이름을 입력하세요.";
+	if(name.endsWith(suffix)) return "'" + suffix + "'는 자동으로 붙습니다. 앞부분만 입력하세요.";
+	return null;
+};
 
 const enrollDeptWithTeam = () => {
-	const deptName = document.getElementById("deptNameInput").value;
-	let teamNameStr = "";
-	let reqNullBoolean = true;
-	let reqFormBoolean = true;
-	const teamInputExist = document.querySelector("input[name='teamInput']");
-	let teamInputCount = 0;
-	if(teamInputExist != null) {
-		document.querySelectorAll("input[name='teamInput']").forEach(e => {
-			if(e.value.length == 0) {
-				e.focus();
-				reqNullBoolean = false;
-				return;
-			} else if(e.value.charAt(e.value.length - 1) == "팀") {
-				reqFormBoolean = false;
-				return;
-			} else {
-				teamInputCount++;
-			}
-		});
-	}
-	
-	if(reqNullBoolean == false || deptName.length == 0) {
-		alert("부서 혹은 팁입력칸은 빈칸일 수 없습니다.");
-		return;
-	} else if(reqFormBoolean == false || deptName.charAt(deptName.length - 1) == '부') {
-		alert("마지막 글자는 '팀' 이나 '부'로 끝날 수 없습니다.");
+	const deptInput = document.getElementById("deptNameInput");
+	const deptError = validateName(deptInput.value, "부");
+	if(deptError) {
+		showCreateError("부서명: " + deptError);
+		deptInput.focus();
 		return;
 	}
-	
-	let roopCount = 1;
-	document.querySelectorAll("input[name='teamInput']").forEach(e => {
-		if(roopCount == teamInputCount) {
-			teamNameStr += e.value;
-		} else {
-			teamNameStr += e.value + ",";
+
+	const teamInputs = [...document.querySelectorAll("input[name='teamInput']")];
+	for(const input of teamInputs) {
+		const teamError = validateName(input.value, "팀");
+		if(teamError) {
+			showCreateError("팀명: " + teamError);
+			input.focus();
+			return;
 		}
-		roopCount++;
-	});
-	
+	}
+
+	clearCreateError();
+	const deptName = deptInput.value.trim();
+	const teamName = teamInputs.map(input => input.value.trim()).join(",");
+
 	fetch(path + "/manage/enrolldepartment.do", {
 		method : "POST",
 		headers : {
 			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
 		},
-		body : "deptName=" + deptName + "&teamName=" + teamNameStr
+		body : "deptName=" + encodeURIComponent(deptName) + "&teamName=" + encodeURIComponent(teamName)
 	})
 	.then(response => response.text())
 	.then(data => {
-		if(data > 0) {
-			alert("부서 등록이 완료되었습니다.");
+		if(Number(data) > 0) {
+			location.reload();
 		} else {
-			alert("부서 등록에 실패했습니다.");
+			showCreateError("부서 등록에 실패했습니다.");
 		}
 	})
-}
+	.catch(() => showCreateError("부서 등록 중 오류가 발생했습니다."));
+};
 
-const showModifyDeptInput = (e) => {
-	const modifyInput = e.target.parentElement.nextElementSibling.firstElementChild;
-	const applyBtn = e.target.parentElement.nextElementSibling.firstElementChild.nextElementSibling;
-	const cancelBtn = e.target.parentElement.nextElementSibling.lastElementChild;
-	
-	modifyInput.hidden = false;
-	applyBtn.hidden = false;
-	cancelBtn.hidden = false;
-}
+/* ---------- 이름 수정 ---------- */
 
-const cancelModifyDept = (e) => {
-		const modifyInput = e.target.previousElementSibling.previousElementSibling;
-		const applyBtn = e.target.previousElementSibling;
-		const cancelBtn = e.target;
-		
-		modifyInput.hidden = true;
-		applyBtn.hidden = true;
-		cancelBtn.hidden = true;
-}
+const openRenameBox = (panel) => {
+	const box = panel.querySelector("[data-role='renameBox']");
+	const input = panel.querySelector("[data-role='renameInput']");
+	const title = panel.querySelector("[data-role='title']").textContent.trim();
 
-const applyModifyDept = (e) => {
-	const deptCode = e.target.parentElement.parentElement.id;
-	const modifyDeptInput = e.target.previousElementSibling;
-	const modifyDeptName = modifyDeptInput.value;
-	if(modifyDeptName.length == 0) {
-		alert("변경하고자 하는 부서명은 빈칸일 수 없습니다.");
+	// 화면의 이름은 '개발부', 서버로 보낼 값은 '개발'이므로 접미사를 떼고 채운다
+	input.value = title.endsWith("부") ? title.slice(0, -1) : title;
+	box.hidden = false;
+	input.focus();
+	input.select();
+};
+
+const closeRenameBox = (panel) => {
+	panel.querySelector("[data-role='renameBox']").hidden = true;
+	panel.querySelector("[data-role='renameError']").hidden = true;
+};
+
+const applyRename = (panel) => {
+	const input = panel.querySelector("[data-role='renameInput']");
+	const note = panel.querySelector("[data-role='renameError']");
+	const error = validateName(input.value, "부");
+
+	if(error) {
+		note.textContent = error;
+		note.classList.add("is-error");
+		note.hidden = false;
+		input.focus();
 		return;
 	}
-	
-	fetch("${path }/manage/modifydeptname.do", {
+	note.hidden = true;
+
+	fetch(path + "/manage/modifydeptname.do", {
 		method : "POST",
 		headers : {
 			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
- 		},
-		body : "deptCode=" + deptCode + "&deptName=" + modifyDeptName
+		},
+		body : "deptCode=" + encodeURIComponent(panel.dataset.panel)
+				+ "&deptName=" + encodeURIComponent(input.value.trim())
 	})
 	.then(response => response.text())
 	.then(data => {
-		console.log(data);
+		if(Number(data) > 0) {
+			location.reload();
+		} else {
+			note.textContent = "부서명 변경에 실패했습니다.";
+			note.classList.add("is-error");
+			note.hidden = false;
+		}
 	})
-}
+	.catch(() => {
+		note.textContent = "부서명 변경 중 오류가 발생했습니다.";
+		note.classList.add("is-error");
+		note.hidden = false;
+	});
+};
 
-const deleteDept = (e) => {
-	const deptCode = e.target.parentElement.parentElement.id;
-	console.log("deptCode : " + deptCode);
-	
+/* ---------- 삭제 ---------- */
+
+const deleteDept = (panel) => {
+	const deptName = panel.querySelector("[data-role='title']").textContent.trim();
+	if(!confirm(deptName + "을(를) 삭제할까요?\n소속 팀도 함께 사라지며 되돌릴 수 없습니다.")) return;
+
 	fetch(path + "/manage/deletedept.do", {
 		method : "POST",
 		headers : {
 			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
 		},
-		body : "deptCode=" + deptCode
+		body : "deptCode=" + encodeURIComponent(panel.dataset.panel)
 	})
-	.then(response => {
-		if(response.ok) {
-			return response.text();
-		} else {
-			return response.text().then(text => {
-				alert(text);
-				throw new Error(text);
-			})
+	.then(response => response.text().then(text => {
+		// 사원이 남아 있으면 서버가 500과 함께 사유를 돌려준다
+		if(!response.ok) throw new Error(text);
+		return text;
+	}))
+	.then(() => location.reload())
+	.catch(error => alert(error.message || "부서 삭제 중 오류가 발생했습니다."));
+};
+
+/* ---------- 이벤트 연결 ---------- */
+
+document.addEventListener("DOMContentLoaded", () => {
+	const firstDept = document.querySelector(".dept-row");
+	if(firstDept) selectDept(firstDept.dataset.code);
+
+	document.getElementById("openCreateBtn").addEventListener("click", openCreatePanel);
+	document.getElementById("cancelCreateBtn").addEventListener("click", closeCreatePanel);
+	document.getElementById("submitCreateBtn").addEventListener("click", enrollDeptWithTeam);
+	document.getElementById("addTeamBtn").addEventListener("click", addTeamInput);
+
+	document.getElementById("deptNameInput").addEventListener("input", clearCreateError);
+
+	document.querySelectorAll(".dept-row").forEach(row => {
+		row.addEventListener("click", () => selectDept(row.dataset.code));
+	});
+
+	document.getElementById("mainView").addEventListener("click", (e) => {
+		const trigger = e.target.closest("[data-action]");
+		if(!trigger) return;
+
+		if(trigger.dataset.action === "removeTeam") {
+			trigger.closest(".team-field").remove();
+			return;
 		}
-	})
-	.then(data => {
-		console.log(data);
-	})
-	.catch(error => {
-		
-	})
-}
+
+		const panel = trigger.closest(".dept-panel");
+		if(!panel) return;
+
+		switch(trigger.dataset.action) {
+			case "rename":       openRenameBox(panel);  break;
+			case "renameCancel": closeRenameBox(panel); break;
+			case "renameApply":  applyRename(panel);    break;
+			case "delete":       deleteDept(panel);     break;
+		}
+	});
+});

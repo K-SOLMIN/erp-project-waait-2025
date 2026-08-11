@@ -3,6 +3,7 @@
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="path" value="${pageContext.request.contextPath }"/>
 <html lang="ko">
 <head>
@@ -77,134 +78,154 @@
 			</div>
         </div>
         <div id="main">
-            <header class="mb-3" style="width:100%;">
-            	<div class="headerTitle">
-            		<a href="#" class="burger-btn d-block d-xl-none">
-                    	<i class="bi bi-justify fs-3"></i>
-                	</a>
-                <h3 style="width : 100%">부서 관리</h3>
-                
-            	</div>
+            <header class="mb-3">
+                <a href="#" class="burger-btn d-block d-xl-none">
+                    <i class="bi bi-justify fs-3"></i>
+                </a>
             </header>
-            <div id="mainView">
-            	<div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">부서조회</h4>
+            <div id="mainView" class="page-heading dept-manage">
+                <div class="page-title">
+                    <div>
+                        <h1>부서 관리</h1>
+                        <p>부서를 선택하면 소속된 팀이 함께 표시됩니다.</p>
                     </div>
-                    <div class="card-content">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-sm-12 col-md-4">
-                                	<p>부서명</p>
-                                    <div class="list-group" role="tablist">
-                                    	<c:if test="${not empty depts }">
-	                                        <c:forEach var="dept" items="${depts }">
-	                                        	<a class="list-group-item list-group-item-action" id="${dept.deptCode }"
-	                                            data-bs-toggle="list" href="#${dept.deptName }" role="tab">${dept.deptName }</a>
-	                                        </c:forEach>
-                                        </c:if>
-                                        <c:if test="${empty depts }">
-                                        	<p>부서가 없습니다</p>
-                                        </c:if>
-                                    </div>
-                                </div>
-                                <c:if test="${not empty depts }">
-	                                <div class="col-12 col-sm-12 col-md-8 mt-1">
-	                                    <div class="tab-content text-justify padding-top-33" id="nav-tabContent">
-	                                    	<c:forEach var="dept" items="${depts }">
-		                                        <div class="tab-pane" id="${dept.deptName }" role="tabpanel"
-		                                            aria-labelledby="${dept.deptCode }">
-		                                            <c:if test="${not empty teams }">
-			                                            <ul class="li-nonestyle">
-			                                            <c:forEach var="team" items="${teams }">
-			                                            	<c:if test="${dept.deptCode eq team.parentCode }">
-			                                            		<li>${team.deptName }</li>
-			                                            	</c:if>
-			                                            </c:forEach>
-			                                            </ul>
-		                                            </c:if>
-		                                            <c:if test="${empty teams }">
-		                                            	<p>팀이 없습니다.</p>
-		                                            </c:if>
-		                                        </div>
-	                                        </c:forEach>
-	                                    </div>
-	                                </div>
-                                </c:if>
-                                
-                            </div>
+                    <button type="button" class="btn btn-primary" id="openCreateBtn">
+                        <i class="bi bi-plus-lg"></i> 새 부서
+                    </button>
+                </div>
+
+                <%-- 새 부서 등록 — 기본은 접혀 있고 '새 부서'로 펼친다 --%>
+                <div class="panel" id="createPanel" hidden>
+                    <div class="panel-head">
+                        <h2>새 부서 등록</h2>
+                        <p>부서와 함께 만들 팀이 있으면 아래에서 같이 추가하세요.</p>
+                    </div>
+                    <div class="panel-body">
+                        <label class="field-label" for="deptNameInput">부서명</label>
+                        <div class="affix-field">
+                            <input type="text" class="form-control" id="deptNameInput" placeholder="개발" autocomplete="off">
+                            <span class="affix">부</span>
                         </div>
+                        <p class="form-note">이름 뒤의 <strong>부</strong>는 자동으로 붙습니다.</p>
+
+                        <div class="split"></div>
+
+                        <label class="field-label">소속 팀 <span class="text-muted fw-normal">(선택 · 최대 5개)</span></label>
+                        <div class="team-fields" id="teamFields"></div>
+                        <button type="button" class="btn btn-light-secondary btn-sm mt-2" id="addTeamBtn">
+                            <i class="bi bi-plus-lg"></i> 팀 추가
+                        </button>
+
+                        <p class="form-note" id="createError" hidden></p>
+                    </div>
+                    <div class="panel-foot">
+                        <button type="button" class="btn btn-light-secondary" id="cancelCreateBtn">취소</button>
+                        <button type="button" class="btn btn-primary" id="submitCreateBtn">등록</button>
                     </div>
                 </div>
-                <!-- /enrolldepartment.do 팀등록 주소Get-->
-                <div class="card">
-		            <div class="card-header">
-		                <h4 class="card-title">부서등록</h4>
-		                <p>부서와 팀을 동시에 등록하려면 +버튼을 눌러 팀 입력란을 추가하시면 됩니다.</p>
-		            </div>
-					<div class="card-body">
-		                <div class="row">
-		                    <div class="col-md-6">
-		                        <div class="form-group">
-		                            부서명
-		                            <div>
-		                            	<input type="text" class="form-control" id="deptNameInput" placeholder="ex)개발 o 개발부 x 뒤에 부는 빼고입력하세요">
-		                            </div>
-		                        </div>
-		                    </div>
-		                    <div class="col-md-6">
-		                        <div class="form-group teamInputContainer">
-		                        	<div id="teamOptionContainer">
-		                            	<span>상속 팀</span>
-		                            	<button class="btn btn-outline-success btn-sm" id="addTeamInputButton" onclick="addTeamInput()">+</button>
-		                            	<button class="btn btn-outline-danger btn-sm" id="delTeamInputButton" onclick="deleteTeamInput()">-</button>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
-		            <div class="actionContainer">
-		            	<button class="btn btn-outline-success" onclick="enrollDeptWithTeam()">등록</button>
-		            </div>
-		        </div>
-		        <div class="card">
-		            <div class="card-header">
-		                <h4 class="card-title">부서 수정/삭제</h4>
-		                <p>부서와 팀을 동시에 등록하려면 +버튼을 눌러 팀 입력란을 추가하시면 됩니다.</p>
-		            </div>
-					<table class="table mb-0" style="margin-left : 30px;">
-	            		<thead class="thead-dark">
-	            			<tr>
-	            				<th>부서명</th>
-	            				<th>동작</th>
-	            				<th></th>
-	            			</tr>
-	            		</thead>
-	            		<tbody>
-	            			<c:if test="${not empty depts }">
-	            				<c:forEach var="dept" items="${depts }">
-			            			<tr id="${dept.deptCode }">
-			            				<td>${dept.deptName }</td>
-			            				<td>
-			            					<button class="btn btn-primary" onclick="showModifyDeptInput(event)">수정</button>
-			            					<button class="btn btn-danger" onclick="deleteDept(event)">삭제</button>
-			            				</td>
-			            				<td>
-			            					<input type="text" name="modifyDeptInput" class="form-control my-input" placeholder="변경할 이름을 입력하세요" hidden="true">
-			            					<button class="btn btn-success" onclick="applyModifyDept(event)" name="applyModifyDeptBtn" hidden="true">적용</button>
-			            					<button class="btn btn-danger" onclick="cancelModifyDept(event)" name="cancelModifyDeptBtn" hidden="true">취소</button>
-			            				</td>
-			            			</tr>
-		            			</c:forEach>
-	            			</c:if>
-	            			<c:if test="${empty depts }">
-	            				<tr colspan="3">
-	            					<td>부서가 없습니다.</td>
-	            				</tr>
-	            			</c:if>
-	            		</tbody>
-            		</table>
-		        </div>
+
+                <%-- 조직 브라우저 — 부서 목록과 선택된 부서의 팀 --%>
+                <div class="panel org-browser">
+                    <aside class="dept-column">
+                        <div class="column-head">
+                            부서 <span class="count tnum">${fn:length(depts) }</span>
+                        </div>
+                        <c:choose>
+                            <c:when test="${not empty depts }">
+                                <ul class="dept-list">
+                                    <c:forEach var="dept" items="${depts }">
+                                        <c:set var="teamCount" value="0" />
+                                        <c:forEach var="team" items="${teams }">
+                                            <c:if test="${team.parentCode eq dept.deptCode }">
+                                                <c:set var="teamCount" value="${teamCount + 1 }" />
+                                            </c:if>
+                                        </c:forEach>
+                                        <li>
+                                            <button type="button"
+                                                class="dept-row ${dept.deptCode eq 'D1' ? 'is-system' : '' }"
+                                                data-code="${dept.deptCode }"
+                                                data-name="${dept.deptName }"
+                                                data-system="${dept.deptCode eq 'D1' }">
+                                                <span class="dept-name">${dept.deptName }</span>
+                                                <span class="team-count tnum">${teamCount }</span>
+                                            </button>
+                                        </li>
+                                    </c:forEach>
+                                </ul>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="empty-note">
+                                    <i class="bi bi-diagram-3"></i>
+                                    <p>등록된 부서가 없습니다.</p>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </aside>
+
+                    <section class="team-column">
+                        <c:forEach var="dept" items="${depts }">
+                            <c:set var="teamCount" value="0" />
+                            <c:forEach var="team" items="${teams }">
+                                <c:if test="${team.parentCode eq dept.deptCode }">
+                                    <c:set var="teamCount" value="${teamCount + 1 }" />
+                                </c:if>
+                            </c:forEach>
+
+                            <div class="dept-panel" data-panel="${dept.deptCode }" hidden>
+                                <div class="team-head">
+                                    <div>
+                                        <h2 data-role="title">${dept.deptName }</h2>
+                                        <span class="sub">소속 팀 <span class="tnum">${teamCount }</span>개</span>
+                                    </div>
+                                    <c:if test="${dept.deptCode ne 'D1' }">
+                                        <div class="team-actions">
+                                            <button type="button" class="btn btn-light-secondary" data-action="rename">이름 수정</button>
+                                            <button type="button" class="btn btn-light-danger" data-action="delete">삭제</button>
+                                        </div>
+                                    </c:if>
+                                </div>
+
+                                <%-- 이름 수정 입력 — 수정 버튼을 눌러야 열린다 --%>
+                                <div class="rename-box" data-role="renameBox" hidden>
+                                    <label class="field-label">변경할 부서명</label>
+                                    <div class="affix-field">
+                                        <input type="text" class="form-control" data-role="renameInput" autocomplete="off">
+                                        <span class="affix">부</span>
+                                    </div>
+                                    <p class="form-note" data-role="renameError" hidden></p>
+                                    <div class="d-flex gap-2 mt-3">
+                                        <button type="button" class="btn btn-primary btn-sm" data-action="renameApply">적용</button>
+                                        <button type="button" class="btn btn-light-secondary btn-sm" data-action="renameCancel">취소</button>
+                                    </div>
+                                    <div class="split"></div>
+                                </div>
+
+                                <c:choose>
+                                    <c:when test="${teamCount > 0 }">
+                                        <ul class="team-list">
+                                            <c:forEach var="team" items="${teams }">
+                                                <c:if test="${team.parentCode eq dept.deptCode }">
+                                                    <li class="team-item">${team.deptName }</li>
+                                                </c:if>
+                                            </c:forEach>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="empty-note">
+                                            <i class="bi bi-people"></i>
+                                            <p>소속된 팀이 없습니다.</p>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+                        </c:forEach>
+
+                        <div class="empty-note" id="noSelection">
+                            <i class="bi bi-arrow-left"></i>
+                            <p>왼쪽에서 부서를 선택하세요.</p>
+                        </div>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
