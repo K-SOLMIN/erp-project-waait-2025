@@ -37,6 +37,9 @@ src/main/resources/**/*.xml
 .dbeaver/
 Scripts/
 
+src/main/webapp/resources/upload
+src/main/resources/sql
+
 # my add gitignore
 specification
 .claude
