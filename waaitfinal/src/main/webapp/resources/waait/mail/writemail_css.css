@@ -1,64 +1,107 @@
-.senderContainer {
-    display : flex;
-    margin-bottom : 10px;
-}
-input[name='senderMailAddress'] {
-    border : none;
-}
-.senderInputContainer {
-    border-bottom : 1px solid black;
-    width:90%;
-}
-.width90{
-    width : 90%;
-}
-.senderContainer>div:first-child {
-    width:7%;
-}
-.receiverContainer>div:first-child {
-    width:7%;
-}
-.mailTitleContainer>div:first-child {
-    width:7%;
-}
-.myborder-bottom{
-    border-bottom : 1px solid black;
-}
-.receiverContainer {
-    display : flex;
-    margin-bottom : 10px;
-}
-.nonestyle-input {
-    border : none;
-    background-color : inherit;
-}
+/* 메일 쓰기 화면 (mail/writemail.jsp) 전용 */
+
+/* 라벨 + 입력 한 줄 */
 .flex-divcontainer {
-    display:flex;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
 }
-.boldtext {
-    font-weight : bold;
-}
-.padding-top3{
-    padding-top : 3px;
-}
-.nostyle-btn {
-    border : none;
-    background-color : inherit;
-}
-.mailTitleContainer {
-	margin-bottom : 10px;
-}
-.finishing-receiver-input {
-    border-radius : 10px;
-    text-align : center;
-    border : 1px solid black;
-    background-color : white;
-    margin-bottom : 3px;
-}
+
+/* 라벨 칸 : 예전에는 7% 였는데 넓은 화면에서 라벨이 잘려서 고정폭으로 바꿈 */
+.senderContainer > div:first-child,
+.receiverContainer > div:first-child,
+.mailTitleContainer > div:first-child,
+.fileContainer > div:first-child,
 .width-7 {
-	width : 7%;
+    flex: 0 0 92px;
+    width: auto;
 }
+
+/* 입력 칸 : 남는 폭을 모두 사용 (min-width:0 이 없으면 flex 안에서 넘친다) */
+.senderInputContainer,
+.width90 {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+}
+
+.myborder-bottom,
+.senderInputContainer {
+    border-bottom: 1px solid #dee2e6;
+}
+
+.nonestyle-input {
+    border: none;
+    background-color: inherit;
+    width: 100%;
+    padding: 6px 2px;
+    outline: none;
+}
+
+.nonestyle-input:focus {
+    outline: none;
+}
+
+.boldtext {
+    font-weight: 600;
+    color: #566a7f;
+}
+
+.padding-top3 {
+    padding-top: 0;
+}
+
+.senderContainer,
+.receiverContainer,
+.mailTitleContainer {
+    margin-bottom: 14px;
+}
+
+/* 파일 첨부 줄은 filepond 높이 때문에 위쪽 정렬이 자연스럽다 */
+.fileContainer {
+    align-items: flex-start;
+}
+
+.fileContainer > div:first-child {
+    padding-top: 10px;
+}
+
+.fileinput-container .filepond--root {
+    margin-bottom: 0;
+}
+
+/* 수신자 입력 영역 */
+#receiverInputContainer {
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.nostyle-btn {
+    border: none;
+    background-color: inherit;
+    color: #6c757d;
+    padding: 0 6px;
+}
+
+.finishing-receiver-input {
+    border-radius: 14px;
+    text-align: center;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa !important;
+    padding: 4px 10px;
+    width: auto;
+}
+
+/* 본문 에디터 */
+.mail-editor-wrapper {
+    margin-top: 8px;
+}
+
+/* 하단 버튼 */
 #actionContainer {
-	display : flex;
-	justify-content : right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
 }

@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="${path }/resources/assets/compiled/css/application-email.css">
   <link rel="stylesheet" href="${path }/resources/assets/compiled/css/app.css">
   <link rel="stylesheet" href="${path }/resources/assets/compiled/css/app-dark.css">
+  <link rel="stylesheet" href="${path }/resources/css/common/layout.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap" rel="stylesheet">
