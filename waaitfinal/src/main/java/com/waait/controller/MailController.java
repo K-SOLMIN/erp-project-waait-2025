@@ -417,8 +417,31 @@ public class MailController {
 
 	}
 	
+	//메일작성 폼 조각. mailmain.jsp 의 메일목록 자리에 fetch 로 끼워넣는다.
+	//mailNo 가 넘어오면 임시저장 메일 이어쓰기.
+	@GetMapping("/writemailform.do")
+	public String writeMailForm(Model model, @RequestParam(defaultValue = "-1") int mailNo) {
+		if(mailNo != -1) {
+			model.addAttribute("mail", service.joinTempoSaveMailByMailNo(mailNo));
+		}
+		return "mail/mailresponse/writemail_response";
+	}
+
+	//mailmain 안에서 화면이동 없이 보낼 때. 저장만 하고 결과값만 돌려준다.
+	@PostMapping("/sendmailajax.do")
+	public @ResponseBody int sendMailAjax(MultipartFile[] upFile, HttpSession session, String mailContent, String mailTitle, String[] mailReceiverAddress, String mailStatus) {
+		saveMail(upFile, session, mailContent, mailTitle, mailReceiverAddress, mailStatus);
+		return 1;
+	}
+
 	@PostMapping("/sendmail.do")
 	public String sendMail(MultipartFile[] upFile, HttpSession session, String mailContent, String mailTitle, String[] mailReceiverAddress, String mailStatus) {
+		saveMail(upFile, session, mailContent, mailTitle, mailReceiverAddress, mailStatus);
+		return "redirect:/mail/mailmain.do";
+	}
+
+	//sendmail.do 와 sendmailajax.do 가 공유하는 저장 로직
+	private void saveMail(MultipartFile[] upFile, HttpSession session, String mailContent, String mailTitle, String[] mailReceiverAddress, String mailStatus) {
 		System.out.println("매개변수로 들어온 receiverArr 길이 : " + mailReceiverAddress.length);
 		Arrays.stream(mailReceiverAddress).forEach(m -> {
 			System.out.println("mailReceiverAddress : " + m);
@@ -476,7 +499,6 @@ public class MailController {
 			}
 
 		}
-		return "redirect:/mail/mailmain.do";
 	}
 	
 	@PostMapping("/addmailmymailbox.do")
@@ -515,7 +537,9 @@ public class MailController {
 	public String joinFavoriteMailBox(Model model, @RequestParam(defaultValue = "1") int cPage) {
 		long empNo = getLoginEmpInfo().getEmpNo();
 		String loginMemberEmailDomain = getLoginEmpInfo().getEmpEmail();
-		Map<String, Object> loginMemberParam = Map.of("empNo", empNo, "mailAddress", loginMemberEmailDomain);
+		//매퍼(getFavoriteMailTotalData / joinFavoriteMailBox)가 쓰는 키 이름과 맞춰야 한다.
+		//Map 파라미터는 키가 없어도 예외 없이 null 이 들어가서 조용히 0건이 된다.
+		Map<String, Object> loginMemberParam = Map.of("empNo", empNo, "loginMemberEmailDomain", loginMemberEmailDomain);
 		
 		int numPerpage = getUserSettingNumPerpage(empNo);
 		int totalData = service.getFavoriteMailTotalData(loginMemberParam);
@@ -863,15 +887,36 @@ public class MailController {
 	}
 	
 	@GetMapping("/mailsettingview.do")
-	public void mailSettingView(Model model) {
+	public String mailSettingView(Model model) {
 		long empNo = getLoginEmpInfo().getEmpNo();
-		
+
 		List<SpamDomain> spamDomains = service.getSpamDomain(empNo);
 		System.out.println("spamDomainList : " + spamDomains);
-		
+
 		model.addAttribute("spamDomains", spamDomains);
+		//select 에 현재 설정값이 선택된 상태로 보이도록 같이 내려준다.
+		model.addAttribute("numPerpage", getUserSettingNumPerpage(empNo));
+
+		return "mail/mailresponse/mailsetting_response";
 	}
-	
+
+	//mailmain 안에서 화면이동 없이 설정을 저장할 때. applymailsetting.do 는 mailmain 전체를 돌려줘서 ajax 로 못쓴다.
+	@PostMapping("/applymailsettingajax.do")
+	public @ResponseBody int applyMailSettingAjax(int numPerpage,
+			@RequestParam(required = false) String[] spamMailAddress) {
+		long empNo = getLoginEmpInfo().getEmpNo();
+
+		Map<String, Object> mailSettingParam = new HashMap<String, Object>();
+		mailSettingParam.put("numPerpage", numPerpage);
+		mailSettingParam.put("empNo", empNo);
+
+		if(spamMailAddress != null && spamMailAddress.length > 0) {
+			mailSettingParam.put("spamMailAddressArr", spamMailAddress);
+		}
+
+		return service.applyMailSetting(mailSettingParam);
+	}
+
 	@PostMapping("applymailsetting.do")
 	public String applyMailSetting(int numPerpage, String[] spamMailAddress, Model model, HttpServletRequest request
 									, HttpServletResponse response) {

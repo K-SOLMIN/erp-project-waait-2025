@@ -2,6 +2,18 @@
  * Mazer 기본값(#main { padding: 2rem })은 넓은 화면에서 콘텐츠가 너무 꽉 차 보여서
  * 화면 폭에 따라 좌우 여백을 늘리고, 아주 넓은 화면에서는 최대 폭을 제한한다. */
 
+/* 공통 푸터
+ * 페이지마다 좌/우 분리 배치, 템플릿 크레딧(Mazer/Saugi) 등이 뒤섞여 있어서
+ * 한 줄 가운데 정렬로 통일한다. 마크업은 각 페이지에서 동일하게 맞춘다. */
+#main > footer .footer {
+	text-align: center;
+	font-size: .8125rem;
+}
+
+#main > footer .footer p {
+	margin-bottom: 0;
+}
+
 @media (min-width: 992px) {
 	#main {
 		padding-left: 2.5rem;
@@ -27,7 +39,8 @@
 	 * 내용 크기로 줄어든다. width + align-self 로 중앙 정렬할 것. */
 	#main > .page-heading,
 	#main > .page-content,
-	#main > header {
+	#main > header,
+	#main > footer {
 		width: 100%;
 		max-width: 1600px;
 		align-self: center;

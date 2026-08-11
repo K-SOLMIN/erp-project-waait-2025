@@ -238,11 +238,9 @@
 			</section>
 		</div>
 
-		<footer>
-			<div class="footer clearfix mb-0 text-muted">
-				<div class="float-start">
-					<p>2023 &copy; waaIT</p>
-				</div>
+		<footer class="mt-4">
+			<div class="footer text-muted">
+				<p>2023 &copy; waaIT</p>
 			</div>
 		</footer>
 	</div>

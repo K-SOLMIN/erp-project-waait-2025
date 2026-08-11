@@ -21,6 +21,11 @@
   <link rel="stylesheet" href="${path }/resources/assets/compiled/css/app.css">
   <link rel="stylesheet" href="${path }/resources/assets/compiled/css/app-dark.css">
   <link rel="stylesheet" href="${path }/resources/css/common/layout.css">
+  <!-- 메일작성 폼(writemail_form.jsp)을 이 화면 안에서 띄우기 위한 스타일 -->
+  <link rel="stylesheet" href="${path }/resources/assets/extensions/summernote/summernote-lite.css">
+  <link rel="stylesheet" href="${path }/resources/assets/compiled/css/form-editor-summernote.css">
+  <link rel="stylesheet" href="${path }/resources/assets/extensions/filepond/filepond.css">
+  <link rel="stylesheet" href="${path }/resources/waait/mail/writemail_css.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gothic+A1&display=swap" rel="stylesheet">
@@ -70,8 +75,8 @@
 								<div class="email-app-menu">
 									<div class="form-group form-group-compose">
 										<!-- compose button  -->
-										<button type="button" class="btn btn-primary btn-block my-4 compose-btn" 
-												onclick="location.assign('${path }/mail/writemail.do')">메일작성</button>
+										<button type="button" class="btn btn-primary btn-block my-4 compose-btn"
+												onclick="openComposeMail()">메일작성</button>
 									</div>
 									
 									<!-- 사이드바 메뉴 시작 -->
@@ -120,6 +125,13 @@
                                             			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#trash" />
                                         			</svg>
 												</div> 휴지통
+											</a>
+											<a href="javascript:mailSettingView()" class="list-group-item" name="menu" id="환경설정" onclick="selectMenu(event);">
+												<div class="fonticon-wrap d-inline me-3">
+													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
+                                            			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#gear" />
+                                        			</svg>
+												</div> 환경설정
 											</a>
 										</div>
 										<!-- sidebar menu  end-->
@@ -614,11 +626,10 @@
 		location.assign("${path }/mail/maildetail.do?mailNo=" + mailNo + "&selectedMailBox=" + selectedMailBox);
 	}
 	
+	//임시저장 메일 이어쓰기도 페이지 이동 없이 목록 자리에서 연다.
 	const continueMailWrite = (e) => {
-		console.log(e.currentTarget.parentElement.id);
-		const selectedMailBox = "임시저장함";
 		const mailNo = e.currentTarget.parentElement.id;
-		location.assign("${path }/mail/continuewritemail.do?mailNo=" + mailNo + "&selectedMailBox=" + selectedMailBox);
+		openComposeMail(mailNo);
 	}
 	
 	const checkAllMail = (function() {
@@ -849,10 +860,14 @@
 	const selectMenu = (function() {
 		let selectMenuName = "받은메일함";
 		const selectMenu = (event) => {
+			//메일작성 폼이 열려있는 상태로 메뉴를 누르면 목록이 가려져 아무것도 안보인다.
+			//메뉴를 고른 시점에 폼을 닫아서 목록이 바로 보이게 한다.
+			closeComposeIfOpen();
+
 			document.querySelectorAll("a[name='menu']").forEach(e => {
 				e.setAttribute("class", "list-group-item");
 			});
-			
+
 			event.currentTarget.setAttribute("class", "list-group-item active");
 			selectMenuName = event.currentTarget.id;
 			console.log("selectMenuName : " + selectMenuName);
@@ -1247,6 +1262,10 @@
 												</c:if>
 											</div>
 											<!-- mailListContainer div end -->
+
+											<!-- 메일작성 폼(writemail_response.jsp)이 들어오는 자리.
+												 폼을 열면 위쪽 툴바(.email-action)와 목록을 감추고 여기만 보여준다. -->
+											<div id="mailComposeContainer" style="display:none;"></div>
 										</div>
 									</div>
 									<!--/ Email list Area -->
@@ -1740,18 +1759,9 @@
 				</section>
 			</div>
 
-			<footer>
-				<div class="footer clearfix mb-0 text-muted">
-					<div class="float-start">
-						<p>2023 &copy; Mazer</p>
-					</div>
-					<div class="float-end">
-						<p>
-							Crafted with <span class="text-danger"><i
-								class="bi bi-heart-fill icon-mid"></i></span> by <a
-								href="https://saugi.me">Saugi</a>
-						</p>
-					</div>
+			<footer class="mt-4">
+				<div class="footer text-muted">
+					<p>2023 &copy; waaIT</p>
 				</div>
 			</footer>
 		</div>
@@ -2023,9 +2033,8 @@
 	    document.querySelector('.sidebar-close-icon').addEventListener('click', () => {
 	        document.querySelector('.email-app-sidebar').classList.remove('show')
 	    })
-	    document.querySelector('.compose-btn').addEventListener('click', () => {
-	        document.querySelector('.compose-new-mail-sidebar').classList.add('show')
-	    })
+	    // .compose-btn 은 openComposeMail() 로 메일작성 폼을 띄운다.
+	    // (Mazer 기본 템플릿의 compose-new-mail-sidebar 는 쓰지 않으므로 열지 않는다)
 	    document.querySelector('.email-compose-new-close-btn').addEventListener('click', () => {
 	        document.querySelector('.compose-new-mail-sidebar').classList.remove('show')
 	    })
@@ -2040,6 +2049,7 @@
 	    }
 	    
 	    const mailSettingView = () => {
+	    	closeComposeIfOpen();
 	    	fetch("${path }/mail/mailsettingview.do", {
 	    		method : "GET"
 	    	})
@@ -2049,21 +2059,53 @@
 	    	});
 	    }
 	    
+	    //환경설정 저장. numPerpage 는 필수, 스팸주소는 입력한 것만 보낸다.
+	    const applyMailSetting = () => {
+	    	const form = document.getElementById("mailSettingForm");
+	    	const numPerpage = form.querySelector("select[name='numPerpage']").value;
+
+	    	let body = "numPerpage=" + numPerpage;
+	    	form.querySelectorAll("input[name='spamMailAddress']").forEach(input => {
+	    		const address = input.value.trim();
+	    		if(address.length > 0) body += "&spamMailAddress=" + encodeURIComponent(address);
+	    	});
+
+	    	fetch("${path }/mail/applymailsettingajax.do", {
+	    		method : "POST",
+	    		headers : {
+	    			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+	    		},
+	    		body : body
+	    	})
+	    	.then(response => response.text())
+	    	.then(result => {
+	    		if(result == 0) {
+	    			alert("설정 저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+	    			return;
+	    		}
+	    		alert("설정을 저장했습니다.");
+	    		mailSettingView(); //등록한 스팸주소가 아래 목록에 바로 보이도록 다시 그린다.
+	    	});
+	    }
+
 	    const deleteSpamMailAddress = (spamMailAddress) => {
+	    	if(!confirm(spamMailAddress + " 을(를) 스팸목록에서 삭제하시겠습니까?")) return;
+
 	    	fetch("${path }/mail/deletespamdomain.do", {
 	    		method : "POST",
 	    		headers : {
 	    			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
 	    		},
-	    		body : "domainAddresses=" + spamMailAddress
+	    		body : "domainAddresses=" + encodeURIComponent(spamMailAddress)
 	    	})
 	    	.then(response => response.text())
 	    	.then(data => {
 	    		if(data == 0) {
 	    			alert("삭제에 실패했습니다.");
-	    		} else {
-	    			alert("삭제에 성공했습니다.");
+	    			return;
 	    		}
+	    		alert("삭제에 성공했습니다.");
+	    		mailSettingView(); //삭제된 주소가 목록에서 바로 빠지도록 다시 그린다.
 	    	});
 	    }
 	    
@@ -2076,7 +2118,207 @@
 		  }
 		});
 	</script>
-	<button onclick="mailSettingView()">환경설정</button>
+
+	<!-- 메일작성 폼용 라이브러리 (summernote 는 jquery 가 먼저 있어야 한다) -->
+	<script src="${path }/resources/assets/extensions/jquery/jquery.min.js"></script>
+	<script src="${path }/resources/assets/extensions/summernote/summernote-lite.min.js"></script>
+	<script src="${path }/resources/assets/extensions/filepond/filepond.js"></script>
+	<script>
+		/* 메일작성 : 별도 페이지로 이동하지 않고 목록 영역(.email-app-list)을
+		 * /mail/writemailform.do 응답(writemail_response.jsp)으로 갈아끼운다.
+		 * 조각은 innerHTML 로 들어가서 script 가 실행되지 않으므로
+		 * 초기화/이벤트 함수는 전부 여기(전역)에 둔다. */
+		let composeFilePond = null;
+
+		//mailNo 를 넘기면 임시저장 메일 이어쓰기
+		const openComposeMail = (mailNo) => {
+			const composeContainer = document.getElementById("mailComposeContainer");
+
+			//이미 작성중이면 내용을 확인하고 새로 연다.
+			if(composeContainer.style.display != "none") {
+				const editable = composeContainer.querySelector(".note-editable");
+				if(editable != null && editable.innerText.trim().length > 0
+						&& !confirm("작성중인 내용은 저장되지 않습니다. 새로 작성하시겠습니까?")) return;
+				destroyComposeMail();
+			}
+
+			let url = "${path }/mail/writemailform.do";
+			if(mailNo) url += "?mailNo=" + mailNo;
+
+			fetch(url)
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById("mailComposeContainer").innerHTML = html;
+				toggleComposeView(true);
+				initComposeMail();
+			});
+		}
+
+		//true : 작성폼만 보이기, false : 툴바 + 목록만 보이기
+		const toggleComposeView = (showCompose) => {
+			document.querySelector(".email-action").style.display = showCompose ? "none" : "";
+			document.getElementById("mailListContainer").style.display = showCompose ? "none" : "";
+			document.getElementById("mailComposeContainer").style.display = showCompose ? "" : "none";
+		}
+
+		const initComposeMail = () => {
+			$("#composeSummernote").summernote({
+				tabsize: 2,
+				height: 320,
+				minHeight: 240,
+				placeholder: "내용을 입력하세요"
+			});
+
+			//임시저장 본문(HTML)은 hidden textarea 로 넘어온다.
+			const tempContentHolder = document.getElementById("tempMailContent");
+			if(tempContentHolder && tempContentHolder.value.trim().length > 0) {
+				$("#composeSummernote").summernote("code", tempContentHolder.value);
+			}
+
+			//pages/filepond.js 는 페이지 로드시점에 한번만 도는 스크립트라 여기서 직접 만든다.
+			composeFilePond = FilePond.create(document.querySelector("#mailComposeContainer .multiple-files-filepond"), {
+				credits: null,
+				allowImagePreview: false,
+				allowMultiple: true,
+				allowFileEncode: false,
+				required: false,
+				storeAsFile: true
+			});
+		}
+
+		//summernote/filepond 는 innerHTML 을 비우기 전에 정리해줘야 인스턴스가 남지 않는다.
+		const destroyComposeMail = () => {
+			if(composeFilePond != null) {
+				composeFilePond.destroy();
+				composeFilePond = null;
+			}
+			$("#composeSummernote").summernote("destroy");
+			document.getElementById("mailComposeContainer").innerHTML = "";
+		}
+
+		const closeComposeMail = () => {
+			const editable = document.querySelector("#mailComposeContainer .note-editable");
+			const written = editable != null && editable.innerText.trim().length > 0;
+
+			if(written && !confirm("작성중인 내용은 저장되지 않습니다. 닫으시겠습니까?")) return;
+
+			destroyComposeMail();
+			toggleComposeView(false);
+		}
+
+		//사이드바 메뉴를 눌렀을 때처럼 확인 없이 바로 닫아야 하는 경우
+		const closeComposeIfOpen = () => {
+			if(document.getElementById("mailComposeContainer").style.display == "none") return;
+
+			destroyComposeMail();
+			toggleComposeView(false);
+		}
+
+		//mailStatus : "전송" 또는 "임시저장"
+		const submitComposeMail = (mailStatus) => {
+			const form = document.getElementById("composeMailForm");
+			const receiverInputs = form.querySelectorAll("input[name='mailReceiverAddress']");
+			const receivers = [];
+
+			receiverInputs.forEach(input => {
+				if(input.value.trim().length > 0) receivers.push(input.value.trim());
+			});
+
+			if(receivers.length === 0) {
+				alert("받는사람을 입력해주세요.");
+				receiverInputs[0].focus();
+				return;
+			}
+
+			form.querySelector("input[name='mailContent']").value = $("#composeSummernote").summernote("code");
+			form.querySelector("input[name='mailReceiver']").value = receivers[0];
+
+			const formData = new FormData(form);
+			//빈 입력칸이 그대로 넘어가지 않도록 받는사람은 다시 채운다.
+			formData.delete("mailReceiverAddress");
+			receivers.forEach(receiver => formData.append("mailReceiverAddress", receiver));
+			formData.append("mailStatus", mailStatus);
+
+			fetch("${path }/mail/sendmailajax.do", {
+				method : "POST",
+				body : formData
+			})
+			.then(response => response.text())
+			.then(result => {
+				if(result != 1) {
+					alert("메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
+					return;
+				}
+
+				destroyComposeMail();
+				toggleComposeView(false);
+				alert(mailStatus == "임시저장" ? "임시저장했습니다." : "메일을 보냈습니다.");
+
+				//보낸 뒤 보여줄 메일함을 클릭한것과 같게 처리(active 표시 + 목록 갱신)
+				const targetMenuId = mailStatus == "임시저장" ? "임시저장함" : "받은메일함";
+				selectMenu({ currentTarget : document.getElementById(targetMenuId) });
+
+				if(mailStatus == "임시저장") temporarySaveMailBoxView();
+				else receiveMailList();
+			});
+		}
+
+		/* 아래 두개는 writemail.jsp 에 있던 받는사람 입력칸 로직을 그대로 옮긴 것 */
+		const changeInputView = (e) => {
+			const receiverInputs = document.querySelectorAll("input[name='mailReceiverAddress']");
+
+			if(e.currentTarget.value.length == 0) return;
+			if(e.currentTarget.getAttribute("class") == "finishing-receiver-input") return;
+
+			if(receiverInputs.length != 5) {
+				const $button = document.createElement("button");
+				$button.setAttribute("type", "button");
+				$button.setAttribute("class", "nostyle-btn");
+				$button.setAttribute("onclick", "deleteMailReceiver(event)");
+				$button.innerText = "x";
+
+				const receiverInput = e.currentTarget;
+				const inputDiv = e.currentTarget.parentElement;
+				const inputContainer = e.currentTarget.parentElement.parentElement;
+
+				const div = document.createElement("div");
+				const $input = document.createElement("input");
+				$input.setAttribute("type", "text");
+				$input.setAttribute("name", "mailReceiverAddress");
+				$input.setAttribute("class", "nonestyle-input");
+				$input.setAttribute("placeholder", "받는사람 입력");
+				$input.setAttribute("onblur", "changeInputView(event)");
+
+				receiverInput.setAttribute("class", "finishing-receiver-input");
+				receiverInput.setAttribute("readOnly", "true");
+
+				inputDiv.appendChild($button);
+
+				div.appendChild($input);
+				inputContainer.appendChild(div);
+			} else {
+				alert("수령인은 최대 5명까지 가능합니다.");
+			}
+		}
+
+		const deleteMailReceiver = (e) => {
+			const receiverInput = document.querySelectorAll("input[name='mailReceiverAddress']");
+			e.currentTarget.parentElement.remove();
+
+			if(receiverInput.length == 1) {
+				const $input = document.createElement("input");
+				$input.setAttribute("type", "text");
+				$input.setAttribute("name", "mailReceiverAddress");
+				$input.setAttribute("class", "nonestyle-input");
+				$input.setAttribute("placeholder", "받는사람 입력");
+				$input.setAttribute("onblur", "changeInputView(event)");
+
+				const div = document.createElement("div");
+				div.appendChild($input);
+				document.getElementById("receiverInputContainer").appendChild(div);
+			}
+		}
+	</script>
 </body>
 <style>
 	.icon-button {
@@ -2090,10 +2332,45 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 	}
+	/* Mazer 기본 스타일이 목록 li 마다 fadeIn(아래에서 위로) 애니메이션을 넣어놔서
+	   메일함을 바꿀 때마다 리스트가 올라온다. 선택자가 길어서 !important 로 끈다. */
+	.users-list-wrapper li {
+		-webkit-animation: none !important;
+		animation: none !important;
+	}
+	/* hover 시 translateY(1px) 이 걸리는데, transform 도 스크롤 영역에 포함돼서
+	   마지막 항목에 마우스를 올리면 1px 넘쳐 스크롤바가 생긴다. 그림자는 남기고 이동만 뺀다. */
+	.users-list-wrapper li.media:hover {
+		-webkit-transform: none !important;
+		transform: none !important;
+	}
 	
 	#sideBarMenu {
 		overflow-y: auto;
 		overflow-x: hidden;
+	}
+	/* 메일작성 폼 영역 : 목록(.email-user-list)과 같은 높이를 쓰되
+	   툴바가 감춰지는 만큼 조금 더 길게 잡는다. */
+	#mailComposeContainer {
+		height: calc(100vh - 9rem);
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 1.5rem;
+	}
+	#mailComposeContainer .card {
+		box-shadow: none;
+		border: 1px solid #dfe3e7;
+	}
+	/* 환경설정 화면도 목록 자리에 들어오므로 여백/스크롤을 따로 준다. */
+	.mail-setting-wrapper {
+		padding: 1.5rem;
+		height: 100%;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+	.mail-setting-wrapper .card {
+		box-shadow: none;
+		border: 1px solid #dfe3e7;
 	}
 	.myMailBoxContainer {
 		display:grid; /* grid */

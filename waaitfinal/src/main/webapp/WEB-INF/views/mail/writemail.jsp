@@ -173,6 +173,12 @@
 
 			</section>
 		</div>
+
+		<footer class="mt-4">
+			<div class="footer text-muted">
+				<p>2023 &copy; waaIT</p>
+			</div>
+		</footer>
 	</div>
 </div>
 
