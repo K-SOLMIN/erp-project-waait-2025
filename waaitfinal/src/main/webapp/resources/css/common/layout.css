@@ -1,0 +1,35 @@
+/* 공통 레이아웃 여백 보정
+ * Mazer 기본값(#main { padding: 2rem })은 넓은 화면에서 콘텐츠가 너무 꽉 차 보여서
+ * 화면 폭에 따라 좌우 여백을 늘리고, 아주 넓은 화면에서는 최대 폭을 제한한다. */
+
+@media (min-width: 992px) {
+	#main {
+		padding-left: 3rem;
+		padding-right: 3rem;
+	}
+}
+
+@media (min-width: 1400px) {
+	#main {
+		padding-left: 4.5rem;
+		padding-right: 4.5rem;
+	}
+}
+
+@media (min-width: 1800px) {
+	#main {
+		padding-left: 6rem;
+		padding-right: 6rem;
+	}
+
+	/* 초광폭 모니터에서 한 줄이 지나치게 길어지지 않도록 콘텐츠 폭 제한.
+	 * #main 은 flex column 컨테이너이므로 margin auto 를 쓰면 아이템이
+	 * 내용 크기로 줄어든다. width + align-self 로 중앙 정렬할 것. */
+	#main > .page-heading,
+	#main > .page-content,
+	#main > header {
+		width: 100%;
+		max-width: 1600px;
+		align-self: center;
+	}
+}

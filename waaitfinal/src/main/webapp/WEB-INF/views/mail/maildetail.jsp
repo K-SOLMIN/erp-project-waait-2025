@@ -4,215 +4,250 @@
 <c:set var="path" value="${pageContext.request.contextPath }"/>
 <c:set var ="loginEmp" value="${sessionScope.SPRING_SECURITY_CONTEXT.authentication.principal}"/>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메일 상세 - waaIT</title>
 <link rel="shortcut icon" href="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2033%2034'%20fill-rule='evenodd'%20stroke-linejoin='round'%20stroke-miterlimit='2'%20xmlns:v='https://vecta.io/nano'%3e%3cpath%20d='M3%2027.472c0%204.409%206.18%205.552%2013.5%205.552%207.281%200%2013.5-1.103%2013.5-5.513s-6.179-5.552-13.5-5.552c-7.281%200-13.5%201.103-13.5%205.513z'%20fill='%23435ebe'%20fill-rule='nonzero'/%3e%3ccircle%20cx='16.5'%20cy='8.8'%20r='8.8'%20fill='%2341bbdd'/%3e%3c/svg%3e" type="image/x-icon">
-<link rel="shortcut icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAiCAYAAADRcLDBAAAEs2lUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS41LjAiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIKICAgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIKICAgIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIgogICAgeG1sbnM6c3RFdnQ9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZUV2ZW50IyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMzIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzQiCiAgIGV4aWY6Q29sb3JTcGFjZT0iMSIKICAgdGlmZjpJbWFnZVdpZHRoPSIzMyIKICAgdGlmZjpJbWFnZUxlbmd0aD0iMzQiCiAgIHRpZmY6UmVzb2x1dGlvblVuaXQ9IjIiCiAgIHRpZmY6WFJlc29sdXRpb249Ijk2LjAiCiAgIHRpZmY6WVJlc29sdXRpb249Ijk2LjAiCiAgIHBob3Rvc2hvcDpDb2xvck1vZGU9IjMiCiAgIHBob3Rvc2hvcDpJQ0NQcm9maWxlPSJzUkdCIElFQzYxOTY2LTIuMSIKICAgeG1wOk1vZGlmeURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiCiAgIHhtcDpNZXRhZGF0YURhdGU9IjIwMjItMDMtMzFUMTA6NTA6MjMrMDI6MDAiPgogICA8eG1wTU06SGlzdG9yeT4KICAgIDxyZGY6U2VxPgogICAgIDxyZGY6bGkKICAgICAgc3RFdnQ6YWN0aW9uPSJwcm9kdWNlZCIKICAgICAgc3RFdnQ6c29mdHdhcmVBZ2VudD0iQWZmaW5pdHkgRGVzaWduZXIgMS4xMC4xIgogICAgICBzdEV2dDp3aGVuPSIyMDIyLTAzLTMxVDEwOjUwOjIzKzAyOjAwIi8+CiAgICA8L3JkZjpTZXE+CiAgIDwveG1wTU06SGlzdG9yeT4KICA8L3JkZjpEZXNjcmlwdGlvbj4KIDwvcmRmOlJERj4KPC94OnhtcG1ldGE+Cjw/eHBhY2tldCBlbmQ9InIiPz5V57uAAAABgmlDQ1BzUkdCIElFQzYxOTY2LTIuMQAAKJF1kc8rRFEUxz9maORHo1hYKC9hISNGTWwsRn4VFmOUX5uZZ36oeTOv954kW2WrKLHxa8FfwFZZK0WkZClrYoOe87ypmWTO7dzzud97z+nec8ETzaiaWd4NWtYyIiNhZWZ2TvE946WZSjqoj6mmPjE1HKWkfdxR5sSbgFOr9Ll/rXoxYapQVik8oOqGJTwqPL5i6Q5vCzeo6dii8KlwpyEXFL519LjLLw6nXP5y2IhGBsFTJ6ykijhexGra0ITl5bRqmWU1fx/nJTWJ7PSUxBbxJkwijBBGYYwhBgnRQ7/MIQIE6ZIVJfK7f/MnyUmuKrPOKgZLpEhj0SnqslRPSEyKnpCRYdXp/9++msneoFu9JgwVT7b91ga+LfjetO3PQ9v+PgLvI1xkC/m5A+h7F32zoLXug38dzi4LWnwHzjeg8UGPGbFfySvuSSbh9QRqZ6H+Gqrm3Z7l9zm+h+iafNUV7O5Bu5z3L/wAdthn7QIme0YAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAJTSURBVFiF7Zi9axRBGIefEw2IdxFBRQsLWUTBaywSK4ubdSGVIY1Y6HZql8ZKCGIqwX/AYLmCgVQKfiDn7jZeEQMWfsSAHAiKqPiB5mIgELWYOW5vzc3O7niHhT/YZvY37/swM/vOzJbIqVq9uQ04CYwCI8AhYAlYAB4Dc7HnrOSJWcoJcBS4ARzQ2F4BZ2LPmTeNuykHwEWgkQGAet9QfiMZjUSt3hwD7psGTWgs9pwH1hC1enMYeA7sKwDxBqjGnvNdZzKZjqmCAKh+U1kmEwi3IEBbIsugnY5avTkEtIAtFhBrQCX2nLVehqyRqFoCAAwBh3WGLAhbgCRIYYinwLolwLqKUwwi9pxV4KUlxKKKUwxC6ZElRCPLYAJxGfhSEOCz6m8HEXvOB2CyIMSk6m8HoXQTmMkJcA2YNTHm3congOvATo3tE3A29pxbpnFzQSiQPcB55IFmFNgFfEQeahaAGZMpsIJIAZWAHcDX2HN+2cT6r39GxmvC9aPNwH5gO1BOPFuBVWAZue0vA9+A12EgjPadnhCuH1WAE8ivYAQ4ohKaagV4gvxi5oG7YSA2vApsCOH60WngKrA3R9IsvQUuhIGY00K4flQG7gHH/mLytB4C42EgfrQb0mV7us8AAMeBS8mGNMR4nwHamtBB7B4QRNdaS0M8GxDEog7iyoAguvJ0QYSBuAOcAt71Kfl7wA8DcTvZ2KtOlJEr+ByyQtqqhTyHTIeB+ONeqi3brh+VgIN0fohUgWGggizZFTplu12yW8iy/YLOGWMpDMTPXnl+Az9vj2HERYqPAAAAAElFTkSuQmCC" type="image/png">
-    
 
 <link rel="stylesheet" crossorigin href="${path }/resources/assets/compiled/css/application-email.css">
 <link rel="stylesheet" crossorigin href="${path }/resources/assets/compiled/css/app.css">
 <link rel="stylesheet" crossorigin href="${path }/resources/assets/compiled/css/app-dark.css">
+<link rel="stylesheet" href="${path }/resources/css/common/layout.css">
+<style>
+	.mail-detail-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		word-break: break-all;
+		margin: 0;
+	}
+	.mail-meta-label {
+		flex: 0 0 72px;
+		color: #6c757d;
+		font-size: .875rem;
+	}
+	.mail-meta-value {
+		word-break: break-all;
+		font-size: .9rem;
+	}
+	.mail-content-body {
+		min-height: 320px;
+		line-height: 1.8;
+		word-break: break-word;
+	}
+	.mail-content-body img {
+		max-width: 100%;
+		height: auto;
+	}
+	.icon-button {
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		outline: none;
+		line-height: 1;
+	}
+	.non-style-button {
+		background: none;
+		border: none;
+		padding: 0;
+		line-height: 1;
+	}
+	.movemail-img {
+		width: 24px;
+		height: 30px;
+		border-radius: 6px;
+	}
+	.mail-file-item {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
+	}
+
+	/* 내 메일함 이동 모달 */
+	.movemail-modal {
+		display: none;
+		position: fixed;
+		top: 90px;
+		right: 3rem;
+		z-index: 1050;
+		width: 280px;
+		max-height: 380px;
+		overflow-y: auto;
+		background-color: #fff;
+		border: 1px solid #e9ecef;
+		border-radius: 10px;
+		box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+	}
+	.mailbox-list {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+	.mailbox-list > li + li {
+		border-top: 1px solid #f1f3f5;
+	}
+	.nostyle-button {
+		width: 100%;
+		padding: .75rem 1rem;
+		background-color: transparent;
+		border: none;
+		text-align: left;
+		font-size: .95rem;
+	}
+	.nostyle-button:hover {
+		background-color: #f8f9fa;
+	}
+</style>
 </head>
 <body>
 <script src="${path }/resources/assets/static/js/initTheme.js"></script>
-	<!-- Detailed Email View -->
-	<div class="email-app-details">
-		<!-- email detail view header -->
-		
-		<!-- email detail view header end-->
-		<div class="email-scroll-area ps ps--active-y">
-			<!-- email details  -->
-			<div class="row">
-				<div class="col-12">
-					<div class="collapsible email-detail-head">
-						<div class="card collapse-header open" role="tablist">
-							<div id="headingCollapse7"
-								class="card-header d-flex justify-content-between align-items-center"
-								data-toggle="collapse" role="tab" data-target="#collapse7"
-								aria-expanded="false" aria-controls="collapse7">
-								<div class="collapse-title media">
-									<div class="pr-1">
-										<div class="avatar me-3">
-											<img src="${path }/resources/assets/compiled/jpg/8.jpg"
-												alt="avtar img holder" width="30" height="30">
-										</div>
-									</div>
-									<div class="media-body mt-25">
-										<span class="text-primary">${mail.senderName }</span> 
-										<span class="d-sm-inline d-none">&lt;${mail.senderMailAddress }&gt;</span>
-										<small class="text-muted d-block">
-											받는사람 : 
-											<c:if test="${not empty mail.receivers }">
+
+<div id="app">
+	<div id="main" style="margin-left: 0px;">
+		<header class="mb-3">
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="logo">
+					<a href="${path }/"><img src="${path }/resources/images/logo.png" alt="Logo" width="150px" style="height:90px"></a>
+				</div>
+				<button type="button" class="btn btn-outline-secondary" onclick="location.assign('${path }/mail/mailmain.do')">
+					<i class="bi bi-arrow-left"></i> 메일함으로
+				</button>
+			</div>
+		</header>
+
+		<div class="page-heading">
+			<section class="section">
+				<div class="card">
+					<div class="card-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+						<h4 class="mail-detail-title">
+							<c:choose>
+								<c:when test="${not empty mail.mailTitle }">${mail.mailTitle }</c:when>
+								<c:otherwise>(제목 없음)</c:otherwise>
+							</c:choose>
+						</h4>
+						<div class="d-flex align-items-center gap-3">
+							<button class="icon-button" onclick="addFavorite()" title="즐겨찾기">
+								<c:forEach var="receiver" items="${mail.receivers}">
+									<c:if test="${receiver.mailReceiverAddress eq loginEmp.empEmail}">
+										<span id="colorDecisionSpan" class=
+											<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+												"favorite text-warning"
+											</c:if>
+											<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+												"favorite"
+											</c:if>
+										>
+											<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
+												<use xlink:href=<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
+																	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
+																</c:if>
+																<c:if test="${mail.mailStatus != '즐겨찾기' }" >
+																	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
+																</c:if> id="iconPath"
+												/>
+											</svg>
+										</span>
+									</c:if>
+								</c:forEach>
+								<c:if test="${mail.senderMailAddress eq loginEmp.empEmail}">
+									<span id="colorDecisionSpan" class=
+										<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
+											"favorite text-warning"
+										</c:if>
+										<c:if test="${mail.senderStatus != '즐겨찾기' }" >
+											"favorite"
+										</c:if>
+									>
+										<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
+											<use xlink:href=<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
+																"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
+															</c:if>
+															<c:if test="${mail.senderStatus != '즐겨찾기' }" >
+																"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
+															</c:if> id="iconPath"
+											/>
+										</svg>
+									</span>
+								</c:if>
+							</button>
+							<button onclick="myMailBoxModal()" class="non-style-button" title="내 메일함으로 이동">
+								<img src="${path }/resources/waait/mail/img/movementmailbox.png" class="movemail-img" alt="메일함 이동">
+							</button>
+							<button class="non-style-button" onclick="deleteMail()" title="삭제">
+								<img src="${path }/resources/waait/mail/img/trashcan.png" style="width: 20px; height: 20px" alt="삭제">
+							</button>
+						</div>
+					</div>
+
+					<div class="card-body">
+						<div class="d-flex align-items-center flex-wrap gap-3 pb-3">
+							<div class="avatar avatar-md">
+								<img src="${path }/resources/assets/compiled/jpg/8.jpg" alt="avatar">
+							</div>
+							<div class="flex-grow-1">
+								<div class="d-flex mb-1">
+									<span class="mail-meta-label">보낸사람</span>
+									<span class="mail-meta-value">
+										<span class="text-primary">${mail.senderName }</span>
+										<span class="text-muted">&lt;${mail.senderMailAddress }&gt;</span>
+									</span>
+								</div>
+								<div class="d-flex">
+									<span class="mail-meta-label">받는사람</span>
+									<span class="mail-meta-value text-muted">
+										<c:choose>
+											<c:when test="${not empty mail.receivers }">
 												<c:forEach var="receiver" items="${mail.receivers }" varStatus="status">
 													${receiver.mailReceiverAddress }<c:if test="${!status.last }">, </c:if>
 												</c:forEach>
-											</c:if> 
-										</small>
-									</div>
-								</div>
-								<div class="information d-sm-flex d-none align-items-center">
-									<small class="text-muted me-3">${mail.mailWriteDate }</small> 
-										<button class="icon-button" onclick="addFavorite()">
-										<c:forEach var="receiver" items="${mail.receivers}">
-											<c:if test="${receiver.mailReceiverAddress eq loginEmp.empEmail}">
-												<span id="colorDecisionSpan" class=
-													<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
-			                                        	"favorite text-warning"
-			                                        </c:if>
-													<c:if test="${mail.mailStatus != '즐겨찾기' }" >
-			                                        	"favorite"
-			                                        </c:if>
-			                                	>
-													<svg class="bi" width="1.5em" height="1.5em" fill="currentColor" style="padding-bottom: 2px;">
-			                                            <use xlink:href=<c:if test="${mail.mailStatus eq '즐겨찾기' }" >
-					                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
-					                                                    </c:if>
-																		<c:if test="${mail.mailStatus != '즐겨찾기' }" >
-					                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
-					                                                 	</c:if> id="iconPath" 
-					                                    />
-			                                        </svg>
-			                                    </span>
-			                                </c:if>
-		                                </c:forEach>
-		                                <c:if test="${mail.senderMailAddress eq loginEmp.empEmail}">
-		                                	<span id="colorDecisionSpan" class=
-												<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
-		                                        	"favorite text-warning"
-		                                        </c:if>
-												<c:if test="${mail.senderStatus != '즐겨찾기' }" >
-		                                        	"favorite"
-		                                        </c:if>
-			                                >
-												<svg class="bi" width="1.5em" height="1.5em" fill="currentColor" style="padding-bottom: 2px;">
-		                                            <use xlink:href=<c:if test="${mail.senderStatus eq '즐겨찾기' }" >
-	                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star-fill"
-	                                                    </c:if>
-														<c:if test="${mail.senderStatus != '즐겨찾기' }" >
-	                                                    	"${path }/resources/assets/static/images/bootstrap-icons.svg#star"
-	                                                 	</c:if> id="iconPath" 
-				                                    />
-		                                        </svg>
-			                            	</span>
-		                                </c:if>
-                                        </button>
-									<div class="dropdown">
-										<!-- <a href="#" class="dropdown-toggle" id="third-open-menu"
-											data-toggle="dropdown" aria-haspopup="true"
-											aria-expanded="false"> <i
-											class="bi bi-dots-vertical-rounded me-0"></i>
-										</a> -->
-										<div class="dropdown-menu dropdown-menu-right"
-											aria-labelledby="second-open-submenu">
-											<a href="#" class="dropdown-item mail-reply"> <i
-												class="bi bi-share"></i> Reply
-											</a> <a href="#" class="dropdown-item"> <i class="bi bi-redo"></i>
-												Forward
-											</a> <a href="#" class="dropdown-item"> <i
-												class="bi bi-info-circle"></i> Report Spam
-											</a>
-										</div>
-									</div>
+											</c:when>
+											<c:otherwise>-</c:otherwise>
+										</c:choose>
+									</span>
 								</div>
 							</div>
-							<div id="collapse7" role="tabpanel"
-								aria-labelledby="headingCollapse7" class="collapse show">
-								<div class="card-content">
-									<div class="topLineContainer" style="padding-left:25px; font-size:30px; display:flex;">
-										<div id="titleContainer">
-											제목 : ${mail.mailTitle }										
-										</div>
-										<div id="deleteButtonContainer">
-											<!-- <button class="btn btn-danger" onclick="deleteMail()">삭제버튼</button> -->
-											<button class="non-style-button" onclick="deleteMail()">
-												<img src="${path }/resources/waait/mail/img/trashcan.png" style="width: 20px; height: 20px" />
-											</button>
-										</div>
-										<div id="myMailBoxOptionContainer">
-											<%-- <c:if test="${not empty myMailBoxes }">
-												<select class="form-control" id="myMailBoxSelect">
-													<option value="default" disabled>메일함을 선택하세요</option>
-													<c:forEach var="myMailBox" items="${myMailBoxes }">
-														<option value="${myMailBox.myMailBoxNo }">메일함 이름 : ${myMailBox.myMailBoxName }</option>
-													</c:forEach>
-												</select>
-											</c:if> --%>
-										</div>
-										<div id="moveMyMailBoxButtonContainer">
-											<!-- <button class="btn btn-primary" onclick="moveMyMailBox()">메일함 이동</button> -->
-											<button onclick="myMailBoxModal()" class="non-style-button">
-												<img src="${path }/resources/waait/mail/img/movementmailbox.png" class="movemail-img" />											
-											</button>
-										</div>
-									</div>
-									<div class="card-body py-1">
-										${mail.mailContent }
-										<!-- <p class="text-bold-500">Greetings!</p>
-										<p>It is a long established fact that a reader will be
-											distracted by the readable content of a page when looking at
-											its layout.The point of using Lorem Ipsum is that it has a
-											more-or-less normal distribution of letters, as opposed to
-											using 'Content here, content here',making it look like
-											readable English.</p>
-										<p>There are many variations of passages of Lorem Ipsum
-											available, but the majority have suffered alteration in some
-											form, by injected humour, or randomised words which don't
-											look even slightly believable.</p>
-										<p class="mb-0">Sincerely yours,</p>
-										<p class="text-bold-500">Envato Design Team</p> -->
-									</div>
-									<div class="card-footer pt-0 border-top">
-										<label class="sidebar-label">Attached Files</label>
-										<c:if test="${not empty mail.files }">
-											<ul class="list-unstyled mb-0">
-												<c:forEach var="mailFile" items="${mail.files }">
-													<li class="cursor-pointer pb-25">
-														<a href="javascript:mailFileDownload('${mailFile.mailOriginalFileName }','${mailFile.mailRenamedFileName }')">${mailFile.mailOriginalFileName }</a>
-													</li>
-												</c:forEach>
-												<!-- <li class="cursor-pointer"><img
-													src="../../../app-assets/static/images/icon/sketch.png"
-													alt="sketch.png" height="30"> <small
-													class="text-muted ms-1 attchement-text">uikit-design.sketch</small>
-												</li> -->
-											</ul>
-										</c:if>
-									</div>
-								</div>
-							</div>
+							<small class="text-muted">${mail.mailWriteDate }</small>
 						</div>
+
+						<hr class="mt-0 mb-4">
+
+						<div class="mail-content-body">${mail.mailContent }</div>
+					</div>
+
+					<div class="card-footer border-top">
+						<label class="sidebar-label d-block mb-2">Attached Files</label>
+						<c:choose>
+							<c:when test="${not empty mail.files }">
+								<ul class="list-unstyled mb-0">
+									<c:forEach var="mailFile" items="${mail.files }">
+										<li class="cursor-pointer mail-file-item pb-1">
+											<i class="bi bi-paperclip text-muted"></i>
+											<a href="javascript:mailFileDownload('${mailFile.mailOriginalFileName }','${mailFile.mailRenamedFileName }')">${mailFile.mailOriginalFileName }</a>
+										</li>
+									</c:forEach>
+								</ul>
+							</c:when>
+							<c:otherwise>
+								<p class="text-muted mb-0" style="font-size: .875rem;">첨부된 파일이 없습니다.</p>
+							</c:otherwise>
+						</c:choose>
 					</div>
 				</div>
+			</section>
+		</div>
+
+		<footer>
+			<div class="footer clearfix mb-0 text-muted">
+				<div class="float-start">
+					<p>2023 &copy; waaIT</p>
+				</div>
 			</div>
-			<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
-				<div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-			</div>
-			<!-- <div class="ps__rail-y" style="top: 0px; height: 736px; right: 0px;">
-				<div class="ps__thumb-y" tabindex="0"
-					style="top: 0px; height: 626px;"></div>
-			</div> -->
-		</div>
+		</footer>
 	</div>
-	<!--/ Detailed Email View -->
-	<%-- <input type="text" id="${mail.mailNo }" name="mailNo" hidden="true"> --%>
-</body>
-<footer>
-	<div class="footer clearfix mb-0 text-muted">
-		<div class="float-start">
-			<p>2023 &copy; Mazer</p>
-		</div>
-		<div class="float-end">
-			<!-- <p>
-				Crafted with <span class="text-danger"><i
-					class="bi bi-heart-fill icon-mid"></i></span> by <a
-					href="https://saugi.me">Saugi</a>
-			</p> -->
-		</div>
-	</div>
-</footer>
+</div>
+
 <div class="movemail-modal">
 	<c:if test="${not empty myMailBoxes }">
 		<ul class="mailbox-list">
@@ -225,48 +260,34 @@
 		</ul>
 	</c:if>
 	<c:if test="${empty myMailBoxes }">
-		<h3 style="text-align: center; ">내 메일함 없음</h3>
+		<p class="text-muted text-center my-4 mb-0">내 메일함 없음</p>
 	</c:if>
 </div>
 
-<%-- <c:if test="${not empty myMailBoxes }">
-												<select class="form-control" id="myMailBoxSelect">
-													<option value="default" disabled>메일함을 선택하세요</option>
-													<c:forEach var="myMailBox" items="${myMailBoxes }">
-														<option value="${myMailBox.myMailBoxNo }">메일함 이름 : ${myMailBox.myMailBoxName }</option>
-													</c:forEach>
-												</select>
-											</c:if> --%>
 <script src="${path }/resources/assets/static/js/components/dark.js"></script>
-<script
-	src="${path }/resources/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-
-
+<script src="${path }/resources/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js"></script>
 <script src="${path }/resources/assets/compiled/js/app.js"></script>
 <script>
 	const mailFileDownload = (oriName, renamed) => {
 		location.assign("${path }/mail/improvedfiledownload.do?mailOriginalFileName=" + oriName + "&mailRenamedFileName=" + renamed);
 	}
-	
+
 	const addFavorite = (function() {
 		const senderBoolean = ${mail.senderMailAddress eq loginEmp.empEmail ? true : false};
 		let applicationBoolean;
-		
+
 		if(senderBoolean) {
 			applicationBoolean = ${mail.senderStatus eq '즐겨찾기' ? true : false};
 		} else {
 			applicationBoolean = ${mail.mailStatus eq '즐겨찾기' ? true : false};
 		}
-		
-		console.log("applicationBoolean : " + applicationBoolean);
-		
+
 		const addFavorite = () => {
 			const mailNo = ${mail.mailNo};
 			if(applicationBoolean == false) {
 				fetch("${path}/mail/addfavorite.do?mailNo=" + mailNo)
 				.then(response => response.text())
 				.then(data => {
-					console.log(data);
 					if(data == 1) {
 						alert("즐겨찾기에 추가되었습니다");
 						applicationBoolean = true;
@@ -280,7 +301,6 @@
 				fetch("${path}/mail/canceladdfavorite.do?mailNo=" + mailNo)
 				.then(response => response.text())
 				.then(data => {
-					console.log(data);
 					if(data == 1) {
 						alert("즐겨찾기가 해제되었습니다.");
 						applicationBoolean = false;
@@ -294,10 +314,8 @@
 		}
 		return addFavorite;
 	})();
-	
-	//document.getElementById("iconPath").setAttribute("xlink:href","${path }/resources/assets/static/images/bootstrap-icons.svg#star");
+
 	const deleteMail = () => {
-		/* const mailNo = document.querySelector("input[name='mailNo']").value; */
 		const mailNo = ${mail.mailNo };
 		fetch('${path }/mail/deletemail.do', {
 			method : "POST",
@@ -311,11 +329,11 @@
 			location.assign('${path }/mail/mailmain.do');
 		})
 	}
-	
+
 	const moveMyMailBox = (e) => {
 		const mailNo = ${mail.mailNo };
 		const mailBoxNo = e.target.nextElementSibling.value;
-		
+
 		fetch('${path }/mail/addmailmymailbox.do', {
 			method : "POST",
 			headers : {
@@ -328,91 +346,27 @@
 			location.assign("${path }/mail/mailmain.do");
 		});
 	}
-	
+
 	//내 메일함으로 이동 모달창 띄우기
 	const myMailBoxModal = (function() {
 		let modalNum = 0; //모달창 0이면 닫혀있음 1이면 열려있음
 		const myMailBoxModal = () => {
 			const myMailBoxModal = document.querySelector(".movemail-modal");
 			const moveMailImg = document.querySelector(".movemail-img");
-			
+
 			if(modalNum == 0) {
 				myMailBoxModal.style.display = "block";
-				moveMailImg.style.border = "1px solid black";
+				moveMailImg.style.border = "1px solid #adb5bd";
 				modalNum = 1;
 			} else {
 				myMailBoxModal.style.display = "none";
 				moveMailImg.style.border = "none";
 				modalNum = 0;
-			}			
+			}
 		}
-		
+
 		return myMailBoxModal;
 	})();
 </script>
-<style>
-.icon-button {
-	background: none;
-	border: none;
-	padding: 0;
-	cursor: pointer;
-	outline: none;
-}
-.card .card-body {
-    border-top: 1px solid black;
-    margin-bottom: 340px;
-}
-#deleteButtonContainer {
-	margin-left: auto;
-}
-#moveMyMailBoxButtonContainer {
-	margin-right: 5px;
-}
-.non-style-button {
-	background: none;
-	border: none;
-}
-.movemail-img{
-	width: 26px;
-	height: 36px;
-	padding: 2px 2px 2px 4px;
-	/* border: 1px solid black; */
-	border-radius: 9px;"
-}
-.movemail-modal {
-	display: none;
-	border: 1px solid black;
-	border-radius: 10px;
-	height: 400px;
-	width: 300px;
-	position: absolute;
-	top: 140px;
-	right: 0.4%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	background-color: white;
-	/* transform: translateX(-50%); */
-}
-.mailbox-list {
-	list-style-type: none;
-	text-align: left;
-	font-size: 25px;
-	padding: 0;
-	/* background-color: white; */
-}
-.mailbox-list>li {
-	border-bottom: 1px solid black;
-	height: 45px;
-	display: flex;
-	align-items: center;
-}
-.nostyle-button {
-	width: 100%;
-	height: 100%;
-	background-color: white;
-	border: none;
-	text-align: left;
-	font-size: 25px;
-}
-</style>
+</body>
 </html>
