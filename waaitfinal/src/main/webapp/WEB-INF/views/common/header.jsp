@@ -2,7 +2,10 @@
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="path" value="${pageContext.request.contextPath }"/>
+<c:set var="forwardServletPath" value="${requestScope['javax.servlet.forward.servlet_path']}"/>
+<c:set var="currentUri" value="${not empty forwardServletPath ? forwardServletPath : pageContext.request.servletPath}"/>
 <html lang="en">
 
 <head>
@@ -15,6 +18,7 @@
     
   <link rel="stylesheet" crossorigin href="${path }/resources/assets/compiled/css/app.css">
   <link rel="stylesheet" crossorigin href="${path }/resources/assets/compiled/css/app-dark.css">
+  <link rel="stylesheet" href="${path }/resources/css/common/layout.css">
 </head>
 
 <body>
@@ -89,48 +93,48 @@
         <ul class="menu">
             <li class="sidebar-title">Menu</li>
             <li
-                class="sidebar-item active ">
+                class="sidebar-item ${(currentUri == '/' || currentUri == '') ? 'active' : ''}">
                 <a href="${path }/" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>Main Page</span>
                 </a>
-                
+
             </li>
             <li
-                class="sidebar-item "> 
+                class="sidebar-item ${fn:startsWith(currentUri, '/manage') ? 'active' : ''}">
                 <a href="${path }/manage/managemain.do" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>인사관리</span>
-                </a>                
+                </a>
             </li>
             <li
-                class="sidebar-item ">
+                class="sidebar-item ${fn:startsWith(currentUri, '/schedule') ? 'active' : ''}">
                 <a href="${path }/schedule/myschedule" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>캘린더</span>
-                </a>                
+                </a>
             </li>
             <li
-                class="sidebar-item ">
+                class="sidebar-item ${fn:startsWith(currentUri, '/codereviewboard') ? 'active' : ''}">
                 <a href="${path }/codereviewboard/main" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>코드리뷰</span>
-                </a>                
+                </a>
             </li>
             <li
-                class="sidebar-item ">
+                class="sidebar-item ${fn:startsWith(currentUri, '/teamproject') ? 'active' : ''}">
                 <a href="${path }/teamproject/main" class='sidebar-link'>
                     <i class="bi bi-grid-fill"></i>
                     <span>팀프로젝트</span>
-                </a>                
+                </a>
             </li>
             <li
-                class="sidebar-item  has-sub">
+                class="sidebar-item has-sub ${fn:startsWith(currentUri, '/edoc') ? 'active' : ''}">
                 <a href="#" class='sidebar-link'>
                     <i class="bi bi-file-text"></i>
                     <span>워크플로우</span>
                 </a>
-                
+
                 <ul class="submenu ">
                     
                     <li class="submenu-item  has-sub">
@@ -164,7 +168,7 @@
                 
 
             </li>
-            <li class="sidebar-item  ">
+            <li class="sidebar-item ${fn:startsWith(currentUri, '/mail') ? 'active' : ''}">
                 <a href="${path }/mail/mailmain.do" class='sidebar-link'>
                     <i class="bi bi-envelope-fill"></i>
                     <span>mail</span>
