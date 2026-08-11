@@ -105,6 +105,18 @@ public class EmployeeManagementDao {
 		return session.delete("em.deleteDept", deptCode);
 	}
 
+	public int deleteTeamsByParent(SqlSession session, String deptCode) {
+		return session.delete("em.deleteTeamsByParent", deptCode);
+	}
+
+	public int getEmpCountByTeamCode(SqlSession session, String teamCode) {
+		return session.selectOne("em.getEmpCountByTeamCode", teamCode);
+	}
+
+	public int deleteTeam(SqlSession session, String teamCode) {
+		return session.delete("em.deleteTeam", teamCode);
+	}
+
 	public int enrollTeamWithParentDept(SqlSession session, Map<String, Object> sqlParam) {
 		return session.insert("em.enrollTeamWithParentDept", sqlParam);
 	}

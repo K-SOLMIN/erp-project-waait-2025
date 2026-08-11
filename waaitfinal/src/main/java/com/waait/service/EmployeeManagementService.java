@@ -126,7 +126,18 @@ public class EmployeeManagementService {
 	
 	@Transactional
 	public int deleteDept(String deptCode) {
+		//부서만 지우면 소속 팀이 부모 없는 행으로 남으므로 함께 지운다
+		dao.deleteTeamsByParent(session, deptCode);
 		return dao.deleteDept(session, deptCode);
+	}
+
+	public int getEmpCountByTeamCode(String teamCode) {
+		return dao.getEmpCountByTeamCode(session, teamCode);
+	}
+
+	@Transactional
+	public int deleteTeam(String teamCode) {
+		return dao.deleteTeam(session, teamCode);
 	}
 
 	public int enrollTeam(Map<String, Object> sqlParam) {

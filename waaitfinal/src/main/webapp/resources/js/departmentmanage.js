@@ -6,6 +6,13 @@
 
 const MAX_TEAM_INPUT = 5;
 
+/** 마지막 글자의 받침 유무로 조사를 고른다 ('개발부를' / '개발1팀을') */
+const particle = (word, withJong, withoutJong) => {
+	const code = word.charCodeAt(word.length - 1);
+	if(code < 0xAC00 || code > 0xD7A3) return withJong;
+	return (code - 0xAC00) % 28 > 0 ? withJong : withoutJong;
+};
+
 /* ---------- 부서 선택 ---------- */
 
 const selectDept = (deptCode) => {
@@ -64,7 +71,7 @@ const addTeamInput = () => {
 			'<input type="text" class="form-control" name="teamInput" placeholder="개발1" autocomplete="off">' +
 			'<span class="affix">팀</span>' +
 		'</div>' +
-		'<button type="button" class="icon-btn" data-action="removeTeam" aria-label="팀 입력란 삭제">' +
+		'<button type="button" class="icon-btn is-danger" data-action="removeTeam" aria-label="팀 입력란 삭제">' +
 			'<i class="bi bi-x-lg"></i>' +
 		'</button>';
 
@@ -79,7 +86,9 @@ const addTeamInput = () => {
 const validateName = (value, suffix) => {
 	const name = value.trim();
 	if(name.length === 0) return "이름을 입력하세요.";
-	if(name.endsWith(suffix)) return "'" + suffix + "'는 자동으로 붙습니다. 앞부분만 입력하세요.";
+	if(name.endsWith(suffix)) {
+		return "'" + suffix + "'" + particle(suffix, "은", "는") + " 자동으로 붙습니다. 앞부분만 입력하세요.";
+	}
 	return null;
 };
 
@@ -182,11 +191,158 @@ const applyRename = (panel) => {
 	});
 };
 
-/* ---------- 삭제 ---------- */
+/* ---------- 팀 ---------- */
+
+const showNote = (el, message) => {
+	el.textContent = message;
+	el.classList.add("is-error");
+	el.hidden = false;
+};
+
+/** 팀명이 이미 쓰이고 있는지 서버에 물어본다. 중복이면 true */
+const isTeamNameTaken = (name) =>
+	fetch(path + "/manage/checkduplicateteamname.do", {
+		method : "POST",
+		headers : {
+			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+		},
+		body : "modifyName=" + encodeURIComponent(name)
+	})
+	.then(response => response.text())
+	.then(data => Number(data) > 0);
+
+const openTeamRename = (item) => {
+	const box = item.querySelector("[data-role='teamEdit']");
+	const input = item.querySelector("[data-role='teamInput']");
+	const name = item.querySelector("[data-role='teamName']").textContent.trim();
+
+	input.value = name.endsWith("팀") ? name.slice(0, -1) : name;
+	item.querySelector(".team-line").hidden = true;
+	box.hidden = false;
+	input.focus();
+	input.select();
+};
+
+const closeTeamRename = (item) => {
+	item.querySelector("[data-role='teamEdit']").hidden = true;
+	item.querySelector("[data-role='teamError']").hidden = true;
+	item.querySelector(".team-line").hidden = false;
+};
+
+const applyTeamRename = (item) => {
+	const input = item.querySelector("[data-role='teamInput']");
+	const note = item.querySelector("[data-role='teamError']");
+	const error = validateName(input.value, "팀");
+
+	if(error) {
+		showNote(note, error);
+		input.focus();
+		return;
+	}
+	note.hidden = true;
+
+	const newName = input.value.trim();
+	isTeamNameTaken(newName)
+		.then(taken => {
+			if(taken) {
+				showNote(note, "'" + newName + "팀'은 이미 있는 이름입니다.");
+				return null;
+			}
+			return fetch(path + "/manage/modifyteamname.do", {
+				method : "POST",
+				headers : {
+					"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+				},
+				body : "teamCode=" + encodeURIComponent(item.dataset.team)
+						+ "&modifyName=" + encodeURIComponent(newName)
+			})
+			.then(response => response.text());
+		})
+		.then(data => {
+			if(data === null || data === undefined) return;
+			if(Number(data) > 0) location.reload();
+			else showNote(note, "팀명 변경에 실패했습니다.");
+		})
+		.catch(() => showNote(note, "팀명 변경 중 오류가 발생했습니다."));
+};
+
+const deleteTeam = (item) => {
+	const teamName = item.querySelector("[data-role='teamName']").textContent.trim();
+	if(!confirm(teamName + particle(teamName, "을", "를") + " 삭제할까요?\n되돌릴 수 없습니다.")) return;
+
+	fetch(path + "/manage/deleteteam.do", {
+		method : "POST",
+		headers : {
+			"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+		},
+		body : "teamCode=" + encodeURIComponent(item.dataset.team)
+	})
+	.then(response => response.text().then(text => {
+		// 사원이 남아 있으면 서버가 500과 함께 사유를 돌려준다
+		if(!response.ok) throw new Error(text);
+		return text;
+	}))
+	.then(() => location.reload())
+	.catch(error => alert(error.message || "팀 삭제 중 오류가 발생했습니다."));
+};
+
+const openTeamAdd = (item) => {
+	item.querySelector(".add-team-btn").hidden = true;
+	item.querySelector("[data-role='teamAddBox']").hidden = false;
+	item.querySelector("[data-role='teamAddInput']").focus();
+};
+
+const closeTeamAdd = (item) => {
+	item.querySelector("[data-role='teamAddBox']").hidden = true;
+	item.querySelector("[data-role='teamAddError']").hidden = true;
+	item.querySelector("[data-role='teamAddInput']").value = "";
+	item.querySelector(".add-team-btn").hidden = false;
+};
+
+const applyTeamAdd = (item, deptCode) => {
+	const input = item.querySelector("[data-role='teamAddInput']");
+	const note = item.querySelector("[data-role='teamAddError']");
+	const error = validateName(input.value, "팀");
+
+	if(error) {
+		showNote(note, error);
+		input.focus();
+		return;
+	}
+	note.hidden = true;
+
+	const newName = input.value.trim();
+	isTeamNameTaken(newName)
+		.then(taken => {
+			if(taken) {
+				showNote(note, "'" + newName + "팀'은 이미 있는 이름입니다.");
+				return null;
+			}
+			return fetch(path + "/manage/enrollteam.do", {
+				method : "POST",
+				headers : {
+					"Content-Type" : "application/json"
+				},
+				body : JSON.stringify({ parentDeptCode : deptCode, teamNameStr : newName })
+			})
+			.then(response => response.text());
+		})
+		.then(data => {
+			if(data === null || data === undefined) return;
+			if(Number(data) > 0) location.reload();
+			else showNote(note, "팀 추가에 실패했습니다.");
+		})
+		.catch(() => showNote(note, "팀 추가 중 오류가 발생했습니다."));
+};
+
+/* ---------- 부서 삭제 ---------- */
 
 const deleteDept = (panel) => {
 	const deptName = panel.querySelector("[data-role='title']").textContent.trim();
-	if(!confirm(deptName + "을(를) 삭제할까요?\n소속 팀도 함께 사라지며 되돌릴 수 없습니다.")) return;
+	const teamCount = panel.querySelectorAll(".team-item[data-team]").length;
+	const teamPart = teamCount > 0 ? "\n소속 팀 " + teamCount + "개도 함께 삭제됩니다." : "";
+
+	if(!confirm(deptName + particle(deptName, "을", "를") + " 삭제할까요?" + teamPart + "\n되돌릴 수 없습니다.")) return;
 
 	fetch(path + "/manage/deletedept.do", {
 		method : "POST",
@@ -232,12 +388,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		const panel = trigger.closest(".dept-panel");
 		if(!panel) return;
+		const item = trigger.closest(".team-item");
 
 		switch(trigger.dataset.action) {
-			case "rename":       openRenameBox(panel);  break;
-			case "renameCancel": closeRenameBox(panel); break;
-			case "renameApply":  applyRename(panel);    break;
-			case "delete":       deleteDept(panel);     break;
+			case "rename":            openRenameBox(panel);            break;
+			case "renameCancel":      closeRenameBox(panel);           break;
+			case "renameApply":       applyRename(panel);              break;
+			case "delete":            deleteDept(panel);               break;
+
+			case "teamRename":        openTeamRename(item);            break;
+			case "teamRenameCancel":  closeTeamRename(item);           break;
+			case "teamRenameApply":   applyTeamRename(item);           break;
+			case "teamDelete":        deleteTeam(item);                break;
+			case "teamAddOpen":       openTeamAdd(item);               break;
+			case "teamAddCancel":     closeTeamAdd(item);              break;
+			case "teamAddApply":      applyTeamAdd(item, panel.dataset.panel); break;
 		}
 	});
 });

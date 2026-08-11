@@ -10,8 +10,7 @@
 <c:set var="urlEmpList"   value="${path }/manage/managemain.do" />
 <c:set var="urlEmpDetail" value="${path }/manage/joinempdetail.do" />
 <c:set var="urlEmpEnroll" value="${path }/manage/enrollemployeeview.do" />
-<c:set var="urlDept"      value="${path }/manage/departmentview.do" />
-<c:set var="urlTeam"      value="${path }/manage/teammanageview.do" />
+<c:set var="urlOrg"        value="${path }/manage/departmentview.do" />
 
 <%-- 사원 상세는 인사조회의 하위 화면이므로 인사조회를 활성 상태로 둔다 --%>
 <c:set var="onEmpList" value="${navUri eq urlEmpList or navUri eq urlEmpDetail }" />
@@ -33,16 +32,10 @@
         </li>
 
         <li class="sidebar-title">조직</li>
-        <li class="sidebar-item ${navUri eq urlDept ? 'active' : '' }">
-            <a href="${urlDept }" class="sidebar-link">
+        <li class="sidebar-item ${navUri eq urlOrg ? 'active' : '' }">
+            <a href="${urlOrg }" class="sidebar-link">
                 <i class="bi bi-diagram-3-fill"></i>
-                <span>부서 관리</span>
-            </a>
-        </li>
-        <li class="sidebar-item ${navUri eq urlTeam ? 'active' : '' }">
-            <a href="${urlTeam }" class="sidebar-link">
-                <i class="bi bi-diagram-2-fill"></i>
-                <span>팀 관리</span>
+                <span>조직 관리</span>
             </a>
         </li>
 

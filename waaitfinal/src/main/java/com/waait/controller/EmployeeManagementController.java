@@ -204,22 +204,10 @@ public class EmployeeManagementController {
 		return "empmanage/departmentmanage";
 	}
 	
-	//팀관리 뷰
+	//팀관리는 조직관리(부서 화면)로 합쳐졌다. 기존 링크를 위해 남겨 둔다
 	@GetMapping("/teammanageview.do")
-	public String teamManageView(Model model) {
-		List<Department> departmentList = getDepartmentList();
-		List<Department> teamList = getTeamList();
-		
-		Department noDept = new Department("D1", "D1", "부서없음");
-		departmentList.add(noDept);
-		
-		System.out.println("newDepartmentList : " + departmentList);
-		System.out.println("teamList : " + teamList);
-		
-		model.addAttribute("depts", departmentList);
-		model.addAttribute("teams", teamList);
-		
-		return "empmanage/teammanage";
+	public String teamManageView() {
+		return "redirect:/manage/departmentview.do";
 	}
 	
 	@GetMapping("/manage/downloadprofile.do")
@@ -674,29 +662,29 @@ public class EmployeeManagementController {
 	}
 	
 	@PostMapping("/checkduplicateteamname.do")
-	public int checkDuplicateTeamName(String modifyName) {
+	public @ResponseBody int checkDuplicateTeamName(String modifyName) {
 		int checkDuplicationNum = service.checkDuplication(modifyName + "팀");
 		System.out.println("check중복 : " + checkDuplicationNum);
 		return checkDuplicationNum;
 	}
+
+	//팀 삭제 - 소속 사원이 없어야 지울 수 있다
+	@PostMapping("/deleteteam.do")
+	public ResponseEntity<String> deleteTeam(String teamCode) {
+		int empCountByTeamCode = service.getEmpCountByTeamCode(teamCode);
+		if(empCountByTeamCode > 0) {
+			return new ResponseEntity<String>("해당 팀의 사원이 없어야 삭제가 가능합니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		int result = service.deleteTeam(teamCode);
+		if(result > 0) return new ResponseEntity<String>("팀이 성공적으로 삭제되었습니다.", HttpStatus.OK);
+		else return new ResponseEntity<String>("알 수 없는 오류로 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 	@PostMapping("/modifyteamname.do")
-	public String modifyTeamName(String teamCode, String modifyName, Model model) {
-		int result = 0;
-		
+	public @ResponseBody int modifyTeamName(String teamCode, String modifyName) {
 		Map<String, String> sqlParam = Map.of("teamCode", teamCode, "modifyName", modifyName + "팀");
-		result = service.modifyTeamName(sqlParam);
-		
-		List<Department> departmentList = getDepartmentList();
-		List<Department> teamList = getTeamList();
-		
-		Department noDept = new Department("D1", "D1", "부서없음");
-		departmentList.add(noDept);
-		
-		model.addAttribute("depts", departmentList);
-		model.addAttribute("teams", teamList);
-		
-		return "empmanage/responsepage/newdeptteamtable";
+		return service.modifyTeamName(sqlParam);
 	}
 	
 	

@@ -86,8 +86,8 @@
             <div id="mainView" class="page-heading dept-manage">
                 <div class="page-title">
                     <div>
-                        <h1>부서 관리</h1>
-                        <p>부서를 선택하면 소속된 팀이 함께 표시됩니다.</p>
+                        <h1>조직 관리</h1>
+                        <p>부서를 선택하면 소속된 팀을 함께 관리할 수 있습니다.</p>
                     </div>
                     <button type="button" class="btn btn-primary" id="openCreateBtn">
                         <i class="bi bi-plus-lg"></i> 새 부서
@@ -200,23 +200,55 @@
                                     <div class="split"></div>
                                 </div>
 
-                                <c:choose>
-                                    <c:when test="${teamCount > 0 }">
-                                        <ul class="team-list">
-                                            <c:forEach var="team" items="${teams }">
-                                                <c:if test="${team.parentCode eq dept.deptCode }">
-                                                    <li class="team-item">${team.deptName }</li>
-                                                </c:if>
-                                            </c:forEach>
-                                        </ul>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <div class="empty-note">
-                                            <i class="bi bi-people"></i>
-                                            <p>소속된 팀이 없습니다.</p>
+                                <ul class="team-list">
+                                    <c:if test="${teamCount == 0 }">
+                                        <li class="team-item is-blank">
+                                            <span class="team-name">소속된 팀이 없습니다</span>
+                                        </li>
+                                    </c:if>
+
+                                    <c:forEach var="team" items="${teams }">
+                                        <c:if test="${team.parentCode eq dept.deptCode }">
+                                            <li class="team-item" data-team="${team.deptCode }">
+                                                <div class="team-line">
+                                                    <span class="team-name" data-role="teamName">${team.deptName }</span>
+                                                    <span class="team-row-actions">
+                                                        <button type="button" class="icon-btn" data-action="teamRename" aria-label="${team.deptName } 이름 수정">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </button>
+                                                        <button type="button" class="icon-btn is-danger" data-action="teamDelete" aria-label="${team.deptName } 삭제">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                                <div class="inline-edit" data-role="teamEdit" hidden>
+                                                    <div class="affix-field">
+                                                        <input type="text" class="form-control" data-role="teamInput" autocomplete="off">
+                                                        <span class="affix">팀</span>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary btn-sm" data-action="teamRenameApply">적용</button>
+                                                    <button type="button" class="btn btn-light-secondary btn-sm" data-action="teamRenameCancel">취소</button>
+                                                </div>
+                                                <p class="form-note" data-role="teamError" hidden></p>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+
+                                    <li class="team-item is-add">
+                                        <button type="button" class="add-team-btn" data-action="teamAddOpen">
+                                            <i class="bi bi-plus-lg"></i> 팀 추가
+                                        </button>
+                                        <div class="inline-edit" data-role="teamAddBox" hidden>
+                                            <div class="affix-field">
+                                                <input type="text" class="form-control" data-role="teamAddInput" placeholder="개발1" autocomplete="off">
+                                                <span class="affix">팀</span>
+                                            </div>
+                                            <button type="button" class="btn btn-primary btn-sm" data-action="teamAddApply">추가</button>
+                                            <button type="button" class="btn btn-light-secondary btn-sm" data-action="teamAddCancel">취소</button>
                                         </div>
-                                    </c:otherwise>
-                                </c:choose>
+                                        <p class="form-note" data-role="teamAddError" hidden></p>
+                                    </li>
+                                </ul>
                             </div>
                         </c:forEach>
 
