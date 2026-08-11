@@ -33,25 +33,25 @@
 	                <tr>
 	                    <td>나이</td>
 	                    <td>
-	                        <input class="nonestyle-input" name="empAge" type="number" value="26" readonly>
+	                        <input class="nonestyle-input" name="empAge" type="text" value="${enAge }" readonly>
 	                    </td>
 	                </tr>
 	                <tr>
 	                    <td>성별</td>
 	                    <td>
-	                        <input class="nonestyle-input" type="text" value="남" readonly>
+	                        <input class="nonestyle-input" type="text" value="${e.empGender }" readonly>
 	                    </td>
 	                </tr>
 	                <tr>
 	                    <td>메일</td>
 	                    <td>
-	                        <input class="nonestyle-input" type="text" value="solmin614@naver.com" readonly>
+	                        <input class="nonestyle-input" type="text" value="${e.empEmail }" readonly>
 	                    </td>
 	                </tr>
 	                <tr>
 	                    <td>주소</td>
 	                    <td>
-	                        <input class="nonestyle-input" type="text" value="경기도 하남시 감일중앙로 20" readonly>
+	                        <input class="nonestyle-input" type="text" value="${e.empAddress }" readonly>
 	                    </td>
 	                </tr>
 	            </table>
@@ -64,5 +64,4 @@
     </c:if>
 </body>
 <link rel="stylesheet" href="${path }/resources/css/sol/empdetailview.css">
-<script src="${path }/resources/js/empdetailview.js" ></script>
 </html>

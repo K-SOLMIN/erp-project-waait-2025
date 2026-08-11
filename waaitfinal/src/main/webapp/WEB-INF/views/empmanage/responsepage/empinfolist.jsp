@@ -25,7 +25,7 @@
 	</c:if>
 	<c:if test="${not empty employees }">
 		<c:forEach var="emp" items="${employees }">
-			<tr onclick="location.assign('${path }/manage/joinempdetail.do?empNo=${emp.empNo }')">
+			<tr onclick="changeEmpDetailView(event)">
 				<td>${emp.empName }</td>
 				<td>${emp.empId }</td>
 				<td>${emp.empBirth }</td>

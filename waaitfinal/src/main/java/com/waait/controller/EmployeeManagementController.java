@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -495,7 +496,12 @@ public class EmployeeManagementController {
 	@PostMapping("/joinempdetail.do")
 	public String joinEmpDetail(Model model, String empId) {
 		Employee searchEmp = service.joinEmpDetail(empId);
-		
+
+		if(searchEmp == null) {
+			System.out.println("사원을 찾을 수 없습니다 : " + empId);
+			return "empmanage/empdetailview";
+		}
+
 		String enAge = calcEnAgeUsingBirth(searchEmp.getEmpBirth());
 		String krAge = calcKrAgeUsingBirth(searchEmp.getEmpBirth());
 		
@@ -802,28 +808,44 @@ public class EmployeeManagementController {
 	private String calcEnAgeUsingBirth(String birthDate) {
 		int age = 0;
 		String strAge = null;
-		
-        LocalDate birth = LocalDate.parse(birthDate);
+
+        LocalDate birth = parseBirthDate(birthDate);
+        if(birth == null) return "-";
+
         LocalDate today = LocalDate.now();
 
         age = Period.between(birth, today).getYears();
         strAge = Integer.toString(age);
-        
+
         return strAge;
 	}
-	
+
 	//한국나이
 	private String calcKrAgeUsingBirth(String birthDate) {
 		int age = 0;
 		String strAge = null;
-		
-		LocalDate birth = LocalDate.parse(birthDate);
+
+		LocalDate birth = parseBirthDate(birthDate);
+		if(birth == null) return "-";
+
         LocalDate today = LocalDate.now();
-        
+
         age = today.getYear() - birth.getYear();
         age++;
         strAge = Integer.toString(age);
-        
+
         return strAge;
+	}
+
+	//출생일이 비어있거나 yyyy-MM-dd 형식이 아니면 null 반환
+	private LocalDate parseBirthDate(String birthDate) {
+		if(birthDate == null || birthDate.isBlank()) return null;
+
+		try {
+			return LocalDate.parse(birthDate.trim());
+		} catch(DateTimeParseException e) {
+			System.out.println("출생일 형식이 올바르지 않습니다 : " + birthDate);
+			return null;
+		}
 	}
 }
