@@ -89,6 +89,11 @@
         </div>
     </div>
    
+   <%-- sidebar 파라미터가 manage면 인사관리 전용 메뉴로 대체한다 --%>
+   <c:if test="${param.sidebar eq 'manage' }">
+       <jsp:include page="/WEB-INF/views/common/managesidebar.jsp" />
+   </c:if>
+   <c:if test="${param.sidebar ne 'manage' }">
    <div class="sidebar-menu">
         <ul class="menu">
             <li class="sidebar-title">Menu</li>
@@ -183,6 +188,7 @@
             </li>
         </ul>
     </div>
+    </c:if>
 </div>
         </div>                                                           
         

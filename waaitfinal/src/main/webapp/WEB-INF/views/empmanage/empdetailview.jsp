@@ -66,29 +66,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="sidebar-menu">
-                    <ul class="menu">
-                        <li class="sidebar-title">Menu</li>
-                        <li class="sidebar-item active">
-                            <a href="${path }/manage/managemain.do" class="sidebar-link">
-                                <i class="bi bi-grid-fill"></i>
-                                <span>인사조회</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="${path }/manage/enrollemployeeview.do" class="sidebar-link">
-                                <i class="bi bi-person-plus-fill"></i>
-                                <span>인사등록</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a href="${path }/manage/departmentview.do" class="sidebar-link">
-                                <i class="bi bi-diagram-3-fill"></i>
-                                <span>부서/팀 관리</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                <jsp:include page="/WEB-INF/views/common/managesidebar.jsp" />
             </div>
         </div>
 

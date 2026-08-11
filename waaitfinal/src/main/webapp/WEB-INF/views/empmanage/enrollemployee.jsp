@@ -3,7 +3,9 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <c:set var="path" value="${pageContext.request.contextPath }" />
 
-<jsp:include page="/WEB-INF/views/common/header.jsp" />
+<jsp:include page="/WEB-INF/views/common/header.jsp">
+	<jsp:param name="sidebar" value="manage" />
+</jsp:include>
 
 <link rel="stylesheet" href="${path }/resources/assets/extensions/filepond/filepond.css">
 <link rel="stylesheet" href="${path }/resources/assets/extensions/filepond-plugin-image-preview/filepond-plugin-image-preview.css">

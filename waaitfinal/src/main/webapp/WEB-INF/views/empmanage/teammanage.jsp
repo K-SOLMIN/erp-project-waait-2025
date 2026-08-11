@@ -58,43 +58,7 @@
 		            </div>
        			</div>
    			</div>
-		    <div class="sidebar-menu">
-		        <ul class="menu">
-		            <li class="sidebar-title">Menu</li>
-		             <li class="sidebar-item active">
-		                <a href="javascript:ajax()" class='sidebar-link' onclick="activeSideBar(event)">
-		                    <i class="bi bi-grid-fill"></i>
-		                    <span>인사조회</span>
-		                </a>
-		            </li>
-		            <li class="sidebar-item">
-		            	<a href="${path }/manage/enrollemployeeview.do" class='sidebar-link' onclick="activeSideBar(event)">
-		                	<i class="bi bi-grid-fill"></i>
-		                    <span>인사등록</span>
-		                </a>
-		            </li>
-		            <li class="sidebar-item">
-		                <a href="javascript:ajax()" class='sidebar-link' onclick="activeSideBar(event)">
-		                    <i class="bi bi-grid-fill"></i>
-		                    <span>부서/팀 관리</span>
-		                </a>
-		            </li>
-		            <li class="sidebar-item has-sub">
-		            	<a href="#" class="sidebar-link">
-		            		<i class="bi bi-stack"></i>
-		            		<span>Components</span>
-		            	</a>
-		            	<ul class="submenu submenu-closed">
-		            		<li class="submenu-item">
-		            			<a href="${path }/manage/departmentview.do" class="submenu-link">부서 등록/수정/삭제</a>
-		            		</li>
-		            		<li class="submenu-item">
-		            			<a href="${path }/manage/teammanageview.do" class="submenu-link">팀 등록/수정/삭제</a>
-		            		</li>
-		            	</ul>
-		            </li>
-				</ul>
-			</div>
+		    <jsp:include page="/WEB-INF/views/common/managesidebar.jsp" />
 		</div>
 	</div>
 	<div id="main">
@@ -103,7 +67,7 @@
 				<a href="#" class="burger-btn d-block d-xl-none"> <i
 					class="bi bi-justify fs-3"></i>
 				</a>
-				<h3 style="width: 100%">부서관리</h3>
+				<h3 style="width: 100%">팀 관리</h3>
 
 			</div>
 		</header>
