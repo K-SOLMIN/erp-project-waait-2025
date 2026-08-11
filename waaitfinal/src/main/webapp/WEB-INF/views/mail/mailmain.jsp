@@ -139,7 +139,7 @@
 										<!-- sidebar label start -->
 										<div class="myMailBoxContainer">
 											<div class="myMailBoxContainerTopRow">
-												<label class="sidebar-label">MyMailBox</label>
+												<label class="sidebar-label">내 메일함</label>
 												<button type="button" class="addMyMailBoxButton" onclick="addMyMailBox()" title="내 메일함 추가">
 													<svg class="bi" width="1em" height="1em" fill="currentColor">
 														<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#plus-lg" />
@@ -2331,26 +2331,36 @@
 	.myMailBoxContainer {
 		margin-top: 1.8rem;
 	}
+	/* 사이드바가 넓어서 + 를 오른쪽 끝에 붙이면 라벨과 너무 떨어져 보인다. 라벨 바로 옆에 둔다. */
 	.myMailBoxContainerTopRow {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		gap: .25rem;
 		margin-bottom: .5rem;
 	}
-	/* 라벨 기본 margin(1.8rem 0 .5rem)을 컨테이너로 옮겨야 + 버튼과 세로 정렬이 맞는다 */
-	.myMailBoxContainerTopRow .sidebar-label {
+	/* 라벨 기본 margin(1.8rem 0 .5rem)을 컨테이너로 옮겨야 + 버튼과 높이가 맞는다.
+	   원본 선택자가 .email-application .content-area-wrapper .sidebar-label 이라
+	   특정도를 맞추려면 앞부분을 그대로 써줘야 한다. */
+	.email-application .content-area-wrapper .myMailBoxContainerTopRow .sidebar-label {
 		margin: 0;
+		line-height: 1.2;
+		/* 원본이 Rubik, Helvetica, Arial, serif 라 한글은 마지막 serif(명조) 로 떨어진다.
+		   다른 메뉴들과 같은 글꼴을 쓰도록 상속받는다. 자간 1px 도 영문 기준이라 뺀다. */
+		font-family: inherit;
+		letter-spacing: 0;
 	}
 	.addMyMailBoxButton {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 24px;
-		height: 24px;
+		width: 20px;
+		height: 20px;
 		padding: 0;
 		background: none;
 		border: none;
 		border-radius: 4px;
+		/* svg 가 width="1em" 이라 아이콘 크기는 여기 font-size 로 맞춘다 */
+		font-size: .8125rem;
 		color: #828d99;
 	}
 	.addMyMailBoxButton:hover {
