@@ -47,6 +47,15 @@
     display: none !important;
 }
 
+/* 테마가 .bi에 width/height 1rem을 고정해 두는데 글리프의 줄 높이는 그보다 커서
+   상자 밖으로 넘친다. 그러면 flex/grid 가운데 정렬이 글리프가 아니라
+   어긋난 상자를 기준으로 맞는다. 상자를 글리프에 맞춰 준다. */
+.dept-manage .bi {
+    width: auto;
+    height: auto;
+    line-height: 1;
+}
+
 .dept-manage .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
@@ -328,14 +337,10 @@
     color: var(--ink-soft);
 }
 
-/* 테마가 .bi에 width/height 1rem을 고정해 둬서 글자만 키우면 상자 밖으로 넘친다 */
 .dept-manage .empty-note i {
     display: block;
-    width: auto;
-    height: auto;
     margin: 0 auto .6rem;
     font-size: 1.75rem;
-    line-height: 1;
 }
 
 .dept-manage .empty-note p {
@@ -439,13 +444,9 @@
     transition: color .15s ease, border-color .15s ease;
 }
 
-/* .bi의 고정 1rem 상자와 글리프가 어긋나 아이콘이 중앙에서 밀린다 */
 .dept-manage .icon-btn i {
     display: block;
-    width: auto;
-    height: auto;
     font-size: 1rem;
-    line-height: 1;
 }
 
 .dept-manage .icon-btn:hover {
