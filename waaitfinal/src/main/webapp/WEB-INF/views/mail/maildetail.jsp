@@ -65,15 +65,21 @@
 		gap: .5rem;
 	}
 
-	/* 내 메일함 이동 모달 */
+	/* 내 메일함 이동 모달 : 버튼 바로 아래에 붙는 드롭다운.
+	   position:fixed 로 두면 화면 오른쪽 끝에 뜨는데, 본문 카드는 가운데 정렬이라
+	   버튼과 한참 떨어져 보인다. wrapper 기준 absolute 로 잡는다. */
+	.movemail-wrap {
+		position: relative;
+		display: inline-flex;
+	}
 	.movemail-modal {
 		display: none;
-		position: fixed;
-		top: 90px;
-		right: 3rem;
+		position: absolute;
+		top: calc(100% + 8px);
+		right: 0;
 		z-index: 1050;
-		width: 280px;
-		max-height: 380px;
+		width: 240px;
+		max-height: 320px;
 		overflow-y: auto;
 		background-color: #fff;
 		border: 1px solid #e9ecef;
@@ -172,9 +178,28 @@
 									</span>
 								</c:if>
 							</button>
-							<button onclick="myMailBoxModal()" class="non-style-button" title="내 메일함으로 이동">
-								<img src="${path }/resources/waait/mail/img/movementmailbox.png" class="movemail-img" alt="메일함 이동">
-							</button>
+							<%-- 모달을 버튼 바로 아래에 붙이기 위해 기준이 되는 wrapper 로 감싼다. --%>
+							<div class="movemail-wrap">
+								<button onclick="myMailBoxModal()" class="non-style-button" title="내 메일함으로 이동">
+									<img src="${path }/resources/waait/mail/img/movementmailbox.png" class="movemail-img" alt="메일함 이동">
+								</button>
+
+								<div class="movemail-modal">
+									<c:if test="${not empty myMailBoxes }">
+										<ul class="mailbox-list">
+											<c:forEach var="myMailBox" items="${myMailBoxes }">
+												<li>
+													<button class="nostyle-button" onclick="moveMyMailBox(event);">${myMailBox.myMailBoxName }</button>
+													<input id="myMailBoxNo" value="${myMailBox.myMailBoxNo }" hidden="true" disabled>
+												</li>
+											</c:forEach>
+										</ul>
+									</c:if>
+									<c:if test="${empty myMailBoxes }">
+										<p class="text-muted text-center my-4 mb-0">내 메일함 없음</p>
+									</c:if>
+								</div>
+							</div>
 							<button class="non-style-button" onclick="deleteMail()" title="삭제">
 								<img src="${path }/resources/waait/mail/img/trashcan.png" style="width: 20px; height: 20px" alt="삭제">
 							</button>
@@ -244,22 +269,6 @@
 			</div>
 		</footer>
 	</div>
-</div>
-
-<div class="movemail-modal">
-	<c:if test="${not empty myMailBoxes }">
-		<ul class="mailbox-list">
-			<c:forEach var="myMailBox" items="${myMailBoxes }">
-				<li>
-					<button class="nostyle-button" onclick="moveMyMailBox(event);">${myMailBox.myMailBoxName }</button>
-					<input id="myMailBoxNo" value="${myMailBox.myMailBoxNo }" hidden="true" disabled>
-				</li>
-			</c:forEach>
-		</ul>
-	</c:if>
-	<c:if test="${empty myMailBoxes }">
-		<p class="text-muted text-center my-4 mb-0">내 메일함 없음</p>
-	</c:if>
 </div>
 
 <script src="${path }/resources/assets/static/js/components/dark.js"></script>

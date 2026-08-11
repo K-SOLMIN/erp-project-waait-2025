@@ -312,6 +312,15 @@ public class MailController {
 		
 	}
 	
+	//내 메일함을 추가한 뒤 사이드바 목록을 다시 그릴 때 쓴다.
+	//(JS 로 항목 HTML 을 직접 만들면 처음 그린 마크업과 어긋난다)
+	@GetMapping("/refreshmymailboxlist.do")
+	public String refreshMyMailBoxList(Model model) {
+		long empNo = getLoginEmpInfo().getEmpNo();
+		model.addAttribute("mailBoxes", service.getMyMailBox(empNo));
+		return "mail/mailresponse/mymailbox_list";
+	}
+
 	@GetMapping("/refreshmymailboxmodal.do")
 	public String getRecentMyMailBoxInfo(Model model) {
 		long empNo = getLoginEmpInfo().getEmpNo();

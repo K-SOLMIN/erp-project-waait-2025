@@ -140,9 +140,15 @@
 										<div class="myMailBoxContainer">
 											<div class="myMailBoxContainerTopRow">
 												<label class="sidebar-label">MyMailBox</label>
-												<button class="addMyMailBoxButton" onclick="addMyMailBox(event)" hidden="true">+</button>
+												<button type="button" class="addMyMailBoxButton" onclick="addMyMailBox()" title="내 메일함 추가">
+													<svg class="bi" width="1em" height="1em" fill="currentColor">
+														<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#plus-lg" />
+													</svg>
+												</button>
 											</div>
-											<input type="text" class="mailBoxNameInput" name="myMailBoxName" placeholder="내 메일함 이름 입력" hidden="true">
+											<input type="text" class="form-control form-control-sm mailBoxNameInput" name="myMailBoxName"
+												placeholder="이름 입력 후 Enter" maxlength="30"
+												onkeyup="myMailBoxInputKeyup(event)" onblur="closeMyMailBoxInput()" hidden="true">
 										</div>
 										<script>
 											const saveSelectMenu = (event) => {
@@ -161,63 +167,59 @@
 												});
 											};
 											
-											document.querySelector(".myMailBoxContainerTopRow").addEventListener("mouseenter", e => {
-												console.log(e.target.lastElementChild);
-												e.target.lastElementChild.hidden = false;
-											});
-											
-											document.querySelector(".myMailBoxContainerTopRow").addEventListener("mouseleave", e => {
-												e.target.lastElementChild.hidden = true;
-											});
-											
-											const addMyMailBox = (e) => {
-												document.querySelector("input[name='myMailBoxName']").hidden = false;
+											/* 내 메일함 추가 : + 를 누르면 입력칸이 열리고 Enter 로 추가, Esc/포커스아웃이면 취소 */
+											const addMyMailBox = () => {
+												const input = document.querySelector("input[name='myMailBoxName']");
+												input.hidden = false;
+												input.value = "";
+												input.focus();
 											}
-											
-											document.querySelector("input[name='myMailBoxName']").addEventListener("blur", e => {
-												const mailBoxName = e.target.value;
-												if(mailBoxName.length > 0) {
-													let userChoice = confirm(mailBoxName + "를 추가하시겠습니까?");
-													console.log("result : " + userChoice);
-													if(userChoice == true) {
-														fetch("${path }/mail/enrollmymailbox.do?wantBoxName=" + mailBoxName)
-														.then(response => response.json())
-														.then(data => {
-															console.log(data);
-															//document.getElementById("myMailBoxListContainer").innerHTML += data;
-															if(data.errorMsg == "메일함 이름은 중복될 수 없습니다") {
-																alert(data.errorMsg);
-															} else {
-																document.getElementById("myMailBoxListContainer").innerHTML
-																	+= "<div style='display:flex;'>"
-																		+ "<a href='javascript:changeView(\"${path }/mail/joinmymailbox.do?myMailBoxNo=" + data.myMailBoxNo + "\")' class='list-group-item' name='myMailBox" + data.myMailBoxNo + "' id='" + data.myMailBoxNo + "' onclick='selectMenu(event)'>"
-																			+ "<div class='fonticon-wrap d-inline me-3'>"
-																				+ "<svg class='bi' width='1.5em' height='1.5em' fill='currentColor'>"
-																					+ "<use xlink:href='${path }/resources/assets/static/images/bootstrap-icons.svg#envelope' />"
-																				+ "</svg>"
-																			+ "</div> " + data.myBoxName
-																		+ "</a>"
-																		+ "<input type='text' name='myMailBoxName' value='" + data.myBoxName + "' hidden='true' disabled>"
-																		+ "<button class='deleteMyMailBoxButton' id='" + data.myMailBoxNo + "' onclick='deleteMyMailBox(event)'>삭제</button>"
-																	+ "</div>";
-																e.target.value = "";
-																e.target.hidden = true;
-																
-																fetch("${path }/mail/refreshmymailboxmodal.do")
-																.then(response => response.text())
-																.then(data => {
-																	document.getElementById("mymailbox-modalmain").innerHTML = data;
-																})
-															}
-														});
-													} else {
-														e.target.hidden = true;
-													}
-												} else {
-													e.target.hidden = true;
+
+											const closeMyMailBoxInput = () => {
+												const input = document.querySelector("input[name='myMailBoxName']");
+												input.value = "";
+												input.hidden = true;
+											}
+
+											const myMailBoxInputKeyup = (e) => {
+												if(e.key == "Enter") enrollMyMailBox(e.target.value.trim());
+												else if(e.key == "Escape") closeMyMailBoxInput();
+											}
+
+											const enrollMyMailBox = (boxName) => {
+												if(boxName.length == 0) {
+													closeMyMailBoxInput();
+													return;
 												}
-											});
-											
+
+												fetch("${path }/mail/enrollmymailbox.do?wantBoxName=" + encodeURIComponent(boxName))
+												.then(response => response.json())
+												.then(data => {
+													if(data.errorMsg) {
+														alert(data.errorMsg);
+														return;
+													}
+													closeMyMailBoxInput();
+													refreshMyMailBoxList();
+												});
+											}
+
+											//항목 HTML 을 JS 로 만들면 처음 그린 마크업과 어긋나서 서버 조각을 그대로 받아온다.
+											const refreshMyMailBoxList = () => {
+												fetch("${path }/mail/refreshmymailboxlist.do")
+												.then(response => response.text())
+												.then(html => {
+													document.getElementById("myMailBoxListContainer").innerHTML = html;
+
+													//메일 이동 모달의 메일함 목록도 같이 맞춰준다.
+													fetch("${path }/mail/refreshmymailboxmodal.do")
+													.then(response => response.text())
+													.then(modalHtml => {
+														document.getElementById("mymailbox-modalmain").innerHTML = modalHtml;
+													});
+												});
+											}
+
 											const showMyMailBoxModal = (function() {
 												let resultOpenModal = false;
 												const showMyMailBoxModal = () => {
@@ -273,77 +275,38 @@
 												}
 											}
 										</script>
+											<%-- 이 마크업은 mailresponse/mymailbox_list.jsp 와 반드시 같아야 한다.
+												 (추가/삭제 후 그 조각으로 통째로 교체되기 때문) --%>
 											<div class="list-group list-group-labels" id="myMailBoxListContainer">
-											<c:if test="${not empty myMailBoxes }">
-												<c:forEach var="myBox" items="${myMailBoxes }">
-													<div style="display:flex">
-														<a href="javascript:myMailBoxView(${myBox.myMailBoxNo })" class="list-group-item mymailbox-list" name="menu" id="myMailBox${myBox.myMailBoxNo }" onclick="selectMenu(event)">
-															<div class="fonticon-wrap d-inline me-3">
-																<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
-			                                            			<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
-			                                        			</svg>
-															</div>
-															<c:if test="${myBox.myMailBoxName.length() <= 7 }">
+											<c:choose>
+												<c:when test="${not empty myMailBoxes }">
+													<c:forEach var="myBox" items="${myMailBoxes }">
+														<div class="mymailbox-item">
+															<a href="javascript:myMailBoxView(${myBox.myMailBoxNo })" class="list-group-item mymailbox-list"
+																name="menu" id="myMailBox${myBox.myMailBoxNo }" title="${myBox.myMailBoxName }"
+																onclick="selectMenu(event)">
+																<div class="fonticon-wrap d-inline me-3">
+																	<svg class="bi" width="1.5em" height="1.5em" fill="currentColor">
+			                                            				<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#envelope" />
+			                                        				</svg>
+																</div>
 																<span class="mymailbox-span">${myBox.myMailBoxName }</span>
-															</c:if>
-															<c:if test="${myBox.myMailBoxName.length() > 7 }">
-																<span class="mymailbox-span">${myBox.myMailBoxName.substring(0, 7) }...</span>
-															</c:if>
-														</a>
-														<button class="deleteMyMailBoxButton" id="${myBox.myMailBoxNo }" onclick="deleteMyMailBox(event)">삭제</button>
-														<input type="text" name="myMailBoxName" value="${myBox.myMailBoxName }" hidden="true" disabled>
-													</div>
-												<!-- <a href="#"
-													class="list-group-item d-flex justify-content-between align-items-center">
-													Work <span class="" style="color:red;">삭제</span>
-												</a> 
-												<a href="#"
-													class="list-group-item d-flex justify-content-between align-items-center">
-													Misc <span class="bullet bullet-warning bullet-sm">misc</span>
-												</a> 
-												<a href="#"
-													class="list-group-item d-flex justify-content-between align-items-center">
-													Family <span class="bullet bullet-danger bullet-sm">family</span>
-												</a> 
-												<a href="#"
-													class="list-group-item d-flex justify-content-between align-items-center">
-													Design <span class="bullet bullet-info bullet-sm">design</span>
-	s											</a> -->
-											 	</c:forEach>
-											</c:if>
+															</a>
+															<button type="button" class="mymailbox-delete-btn" title="메일함 삭제"
+																data-boxno="${myBox.myMailBoxNo }" data-boxname="${myBox.myMailBoxName }"
+																onclick="deleteMyMailBox(event)">
+																<svg class="bi" width="1em" height="1em" fill="currentColor">
+																	<use xlink:href="${path }/resources/assets/static/images/bootstrap-icons.svg#trash" />
+																</svg>
+															</button>
+														</div>
+												 	</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<p class="mymailbox-empty">아직 만든 메일함이 없습니다.</p>
+												</c:otherwise>
+											</c:choose>
 										</div>
-										<script>
-											//내 메일함 이름 ...으로 축약되어있으면 마우스 올려놓을시 풀 네임 보여주고 떠나면 다시 축약된 이름을 보이게함.
-											document.querySelectorAll("a[class='list-group-item mymailbox-list']").forEach(e => {
-												//mailboxName이 요약된 내 메일함 이름
-												let mailboxName = e.lastElementChild.innerText;
-												
-												if(mailboxName.trim().endsWith("...")) {
-													const myMailBoxFullName = e.nextElementSibling.nextElementSibling.value;
-
-													e.addEventListener("mouseenter", e => {
-														e.target.nextElementSibling.remove();
-														e.target.lastElementChild.innerText = myMailBoxFullName;
-													});
-													
-													e.addEventListener("mouseleave", e => {
-														let myMailBoxId = e.target.id;
-														let myMailBoxNo = myMailBoxId.substring(9, myMailBoxId.length);
-														
-														const delButton = document.createElement("button");
-														delButton.className = "deleteMyMailBoxButton";
-														delButton.id = myMailBoxNo;
-														delButton.onclick = deleteMyMailBox;
-														delButton.innerText = "삭제";
-														
-														e.target.after(delButton);
-														
-														e.target.lastElementChild.innerText = mailboxName;
-														
-													});
-												}
-											});
-										</script>
 										<!-- sidebar label end -->
 										<div class="ps__rail-x" style="left: 0px; bottom: 0px;">
 											<div class="ps__thumb-x" tabindex="0"
@@ -1006,29 +969,28 @@
 		}
 		
 		const deleteMyMailBox = (e) => {
-			const myMailBoxNo = e.currentTarget.id;
-			const myMailBoxName = e.currentTarget.nextElementSibling.value;
-			const result = confirm(myMailBoxName + "을(를) 삭제하시겠습니까?");
-			if(result == true) {
-				console.log("result : " + result);
-				fetch("${path }/mail/deletemymailbox.do", {
-					method : "POST",
-					headers : {
-						"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
-					},
-					body : "myMailBoxNo=" + myMailBoxNo
-				})
+			const myMailBoxNo = e.currentTarget.dataset.boxno;
+			const myMailBoxName = e.currentTarget.dataset.boxname;
+
+			if(!confirm(myMailBoxName + "을(를) 삭제하시겠습니까?\n메일함 안의 메일은 휴지통으로 이동합니다.")) return;
+
+			fetch("${path }/mail/deletemymailbox.do", {
+				method : "POST",
+				headers : {
+					"Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8"
+				},
+				body : "myMailBoxNo=" + myMailBoxNo
+			})
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById("myMailBoxListContainer").innerHTML = html;
+
+				fetch("${path }/mail/refreshmymailboxmodal.do")
 				.then(response => response.text())
-				.then(data => {
-					document.getElementById("myMailBoxListContainer").innerHTML = data;
-					
-					fetch("${path }/mail/refreshmymailboxmodal.do")
-					.then(response => response.text())
-					.then(data => {
-						document.getElementById("mymailbox-modalmain").innerHTML = data;
-					})
-				})
-			}
+				.then(modalHtml => {
+					document.getElementById("mymailbox-modalmain").innerHTML = modalHtml;
+				});
+			});
 		}
 		
 		const restoreMail = () => {
@@ -1951,13 +1913,6 @@
 			font-size:15px;
 		}
 		
-		.deleteMyMailBoxButton {
-			background-color:white;
-			border:none;
-			color:red;
-			margin-left:35px;
-		}
-		
 		#recentSearchContainer {
 			margin-top : 30px;
 		}
@@ -2372,20 +2327,78 @@
 		box-shadow: none;
 		border: 1px solid #dfe3e7;
 	}
+	/* MyMailBox 영역 */
 	.myMailBoxContainer {
-		display:grid; /* grid */
+		margin-top: 1.8rem;
 	}
 	.myMailBoxContainerTopRow {
-		display:flex; /* flex */
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: .5rem;
+	}
+	/* 라벨 기본 margin(1.8rem 0 .5rem)을 컨테이너로 옮겨야 + 버튼과 세로 정렬이 맞는다 */
+	.myMailBoxContainerTopRow .sidebar-label {
+		margin: 0;
 	}
 	.addMyMailBoxButton {
-		background:none;
-		border:none;
-		padding-top:22px;
-		padding-left:30px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		background: none;
+		border: none;
+		border-radius: 4px;
+		color: #828d99;
+	}
+	.addMyMailBoxButton:hover {
+		background-color: #eef1f5;
+		color: #5a8dee;
 	}
 	.mailBoxNameInput {
-		
+		margin-bottom: .5rem;
+	}
+	.mymailbox-empty {
+		margin: 0;
+		padding: .4rem 0;
+		color: #a5adb7;
+		font-size: .8125rem;
+	}
+
+	/* 목록 한 줄 : 이름은 넘치면 말줄임, 삭제 버튼은 hover 시에만 */
+	.mymailbox-item {
+		display: flex;
+		align-items: center;
+	}
+	.mymailbox-item > a {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+	}
+	.mymailbox-span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.mymailbox-delete-btn {
+		flex: 0 0 auto;
+		visibility: hidden;
+		padding: .25rem;
+		background: none;
+		border: none;
+		border-radius: 4px;
+		color: #c7cfd6;
+		line-height: 1;
+	}
+	.mymailbox-item:hover .mymailbox-delete-btn {
+		visibility: visible;
+	}
+	.mymailbox-delete-btn:hover {
+		background-color: #fdeaea;
+		color: #dc3545;
 	}
 </style>
 </html>
